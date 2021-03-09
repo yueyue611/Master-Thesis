@@ -1,5 +1,8 @@
+# Using Git
+see common Git commands in [Using Git](https://docs.github.com/en/github/using-git)
+
 # Basic writing and formatting syntax
-see basic uses in [Github Docs](https://docs.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax)
+see basic uses in [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax)
 
 # Add SSH key
 ## 1. Generating a new SSH key and adding it to the ssh-agent
