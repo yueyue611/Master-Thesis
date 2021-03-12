@@ -55,19 +55,110 @@
   
   **ERROR!** Then install the dependencies.
   
-  *configure: error: You must install the glib-2.0 gobject-2.0 >= 2.48.0 pkg-config module to compile libvirt*
+    - **ERROR 1:** *configure: error: You must install the glib-2.0 gobject-2.0 >= 2.48.0 pkg-config module to compile libvirt*
   
-  ![libvirt3](https://user-images.githubusercontent.com/39553089/110870661-32602380-82cd-11eb-96b1-6324f198a61f.png)
-  ![libvirt4](https://user-images.githubusercontent.com/39553089/110871055-f2e60700-82cd-11eb-99c3-b59c52e72044.png)
+    ![libvirt3](https://user-images.githubusercontent.com/39553089/110870661-32602380-82cd-11eb-96b1-6324f198a61f.png)
+    ![libvirt4](https://user-images.githubusercontent.com/39553089/110871055-f2e60700-82cd-11eb-99c3-b59c52e72044.png)
   
-  *configure: error: You must install the gnutls >= 3.2.0 pkg-config module to compile libvirt*
+    - **ERROR 2:** *configure: error: You must install the gnutls >= 3.2.0 pkg-config module to compile libvirt*
   
-  ![libvirt5](https://user-images.githubusercontent.com/39553089/110871065-f8435180-82cd-11eb-9739-78423b17ad41.png)
-  ![libvirt6](https://user-images.githubusercontent.com/39553089/110873740-b5d04380-82d2-11eb-9c3f-3c076222b173.png)
+    ![libvirt5](https://user-images.githubusercontent.com/39553089/110871065-f8435180-82cd-11eb-9739-78423b17ad41.png)
+    ![libvirt6](https://user-images.githubusercontent.com/39553089/110873740-b5d04380-82d2-11eb-9c3f-3c076222b173.png)
   
-  *configure: error: libnl3-devel is required for macvtap support*
+    - **ERROR 3:** *configure: error: libnl3-devel is required for macvtap support*
   
-  ![libvirt7](https://user-images.githubusercontent.com/39553089/110873886-f5972b00-82d2-11eb-8007-65a85e3a6505.png)
+    ![libvirt7](https://user-images.githubusercontent.com/39553089/110873886-f5972b00-82d2-11eb-8007-65a85e3a6505.png)
+    ![libvirt8](https://user-images.githubusercontent.com/39553089/110874487-18760f00-82d4-11eb-80f8-36750e56936b.png)
+  
+    - **ERROR 4:** *configure: error: Package requirements (libnl-route-3.0) were not met*
+  
+    ![libvirt9](https://user-images.githubusercontent.com/39553089/110874501-1e6bf000-82d4-11eb-861d-5b238af07115.png)
+    ![libvirt10](https://user-images.githubusercontent.com/39553089/110874663-74d92e80-82d4-11eb-83cd-381ae4466fad.png)
+  
+    - **ERROR 5:** *configure: error: libxml2 >= 2.9.1 is required for libvirt*
+  
+    ![libvirt11](https://user-images.githubusercontent.com/39553089/110874871-d5686b80-82d4-11eb-9513-d012e3e3fcbd.png)
+    ![libvirt12](https://user-images.githubusercontent.com/39553089/110874881-da2d1f80-82d4-11eb-8e6f-477143d19411.png)
+  
+    - **ERROR 6:** *configure: error: "xsltproc is required to build libvirt"*
+  
+    ![libvirt13](https://user-images.githubusercontent.com/39553089/110875462-f3829b80-82d5-11eb-8089-117ab95de8d1.png)
+    ![libvirt14](https://user-images.githubusercontent.com/39553089/110875469-f7162280-82d5-11eb-91eb-3f37a83540a1.png)
+  
+    - **ERROR 7:** *configure: error: You must install device-mapper-devel/libdevmapper to compile libvirt with mpath storage driver*
+  
+    ![libvirt15](https://user-images.githubusercontent.com/39553089/110875807-9a673780-82d6-11eb-847b-e89cc09bb52f.png)
+    ![libvirt16](https://user-images.githubusercontent.com/39553089/110875815-9e935500-82d6-11eb-98cf-5034075a2e45.png)
+  
+    - **ERROR 8:** *configure: error: You must install the pciaccess module to build with udev*
+  
+    ![libvirt17](https://user-images.githubusercontent.com/39553089/110876342-91c33100-82d7-11eb-907d-1205be689080.png)
+    ![libvirt18](https://user-images.githubusercontent.com/39553089/110876353-95ef4e80-82d7-11eb-95e5-48c5e3668c17.png)
+  
+    - **Warning:**
+    ![libvirt19](https://user-images.githubusercontent.com/39553089/110876361-9ee02000-82d7-11eb-9bc4-9d5fc5a68a9a.png)
+  
+  Afterwards:
+  
+  ```
+  ~/build$ make
+  ~/build$ sudo make install
+  ```
+  
+  ![libvirt20](https://user-images.githubusercontent.com/39553089/110877606-ec5d8c80-82d9-11eb-80d2-21d0b3b36cd4.png)
+  ![libvirt21](https://user-images.githubusercontent.com/39553089/110877614-f1bad700-82d9-11eb-8143-d9a4c8e0e808.png)
+  
+  
+## 3. Install the plugin
+
+- Check the [guide](https://github.com/vagrant-libvirt/vagrant-libvirt#installation)
+
+  ```
+  sudo apt-get build-dep vagrant ruby-libvirt
+  sudo apt-get install qemu libvirt-bin ebtables dnsmasq-base
+  sudo apt-get install libxslt-dev libxml2-dev libvirt-dev zlib1g-dev ruby-dev
+  ```
+
+  **ERROR:** *E: You must put some 'source' URIs in your sources.list*
+
+  ![plugin1](https://user-images.githubusercontent.com/39553089/110879153-c1c10300-82dc-11eb-9600-0efe673f33bf.png)
+
+  Click *Source Code* and reload it.
+  
+  ![plugin2](https://user-images.githubusercontent.com/39553089/110879283-ff259080-82dc-11eb-8a36-912af68f6bcf.png)
+  ![plugin3](https://user-images.githubusercontent.com/39553089/110879352-211f1300-82dd-11eb-9d78-4b663b8b4611.png)
+  
+
+
+  
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+
+
+
+  
+  
+
+
+  
+
+
+
+
+
+  
   
 
 
