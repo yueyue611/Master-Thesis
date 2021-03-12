@@ -114,19 +114,98 @@
 - Check the [guide](https://github.com/vagrant-libvirt/vagrant-libvirt#installation)
 
   ```
-  sudo apt-get build-dep vagrant ruby-libvirt
-  sudo apt-get install qemu libvirt-bin ebtables dnsmasq-base
-  sudo apt-get install libxslt-dev libxml2-dev libvirt-dev zlib1g-dev ruby-dev
+  ~$ sudo apt-get build-dep vagrant ruby-libvirt
+  ~$ sudo apt-get install qemu libvirt-bin ebtables dnsmasq-base
+  ~$ sudo apt-get install libxslt-dev libxml2-dev libvirt-dev zlib1g-dev ruby-dev
   ```
 
-  **ERROR:** *E: You must put some 'source' URIs in your sources.list*
+  **ERROR 1:** *E: You must put some 'source' URIs in your sources.list*
 
-  ![plugin1](https://user-images.githubusercontent.com/39553089/110879153-c1c10300-82dc-11eb-9600-0efe673f33bf.png)
+    ![plugin1](https://user-images.githubusercontent.com/39553089/110879153-c1c10300-82dc-11eb-9600-0efe673f33bf.png)
 
-  Click *Source Code* and reload it.
+    Click *Source Code* and reload it.
   
-  ![plugin2](https://user-images.githubusercontent.com/39553089/110879283-ff259080-82dc-11eb-8a36-912af68f6bcf.png)
-  ![plugin3](https://user-images.githubusercontent.com/39553089/110879352-211f1300-82dd-11eb-9d78-4b663b8b4611.png)
+    ![plugin2](https://user-images.githubusercontent.com/39553089/110879283-ff259080-82dc-11eb-8a36-912af68f6bcf.png)
+    ![plugin3](https://user-images.githubusercontent.com/39553089/110879352-211f1300-82dd-11eb-9d78-4b663b8b4611.png)
+    ![PLUGIN4](https://user-images.githubusercontent.com/39553089/110881080-013d1e80-82e0-11eb-9a09-46649509a237.png)
+  
+  Now install vagrant-libvirt using standard Vagrant plugin installation methods.
+  
+  ```
+  ~$ vagrant plugin install vagrant-libvirt
+  ```
+  
+  **ERROR 2:** *nokogiri requires Ruby version < 3.1.dev, >= 2.5*
+   
+    ![plugin5](https://user-images.githubusercontent.com/39553089/110882398-26cb2780-82e2-11eb-9963-13ae7f4778bb.png)
+   
+    See recent versions of Ruby:
+   
+    ![plugin6](https://user-images.githubusercontent.com/39553089/110889501-88918e80-82ee-11eb-8c71-19cb2436839b.png)
+    
+    Install Ruby 2.6.0:
+   
+    ![plugin7](https://user-images.githubusercontent.com/39553089/110889958-6a785e00-82ef-11eb-8224-aa9d2a98104d.png)
+   
+    Remove Ruby, install 3.0.0 via snap:
+   
+    ```
+    ~$ sudo apt remove ruby
+    ~$ sudo apt autoremove
+    ```
+    
+    ```
+    ~$ sudo snap install ruby --classic
+    ```
+   
+    ![plugin8](https://user-images.githubusercontent.com/39553089/110891096-9399ee00-82f1-11eb-9417-1ae43d9904e2.png)
+    
+    Not working, remove 3.0.0 and install 2.6.0 again:
+    
+    ```
+    ~$ sudo snap remove ruby 
+    ```
+    
+    ```
+    ~$ sudo apt install ruby
+    ```
+    
+    
+    
+
+   
+   
+   
+
+   
+   
+
+
+
+  
+  
+
+
+## Install ComNetsEmu
+
+- [Repo](https://git.comnets.net/public-repo/comnetsemu#option-1-install-in-a-vagrant-managed-vm-highly-recommended)
+
+  ```
+  ~$ git clone https://git.comnets.net/public-repo/comnetsemu.git comnetsemu
+  ```
+  
+  ![comnetsemu1](https://user-images.githubusercontent.com/39553089/110881504-c12a6b80-82e0-11eb-8c5f-7f9de083fb95.png)
+  
+  
+## Use Libvirt as Provider
+
+Run the following command in the ComNetsEmu's source directory:
+
+```
+~/comnetsemu$ vagrant up --provider libvirt comnetsemu
+```
+  
+  
   
 
 
