@@ -10,10 +10,10 @@ import itertools
 #  h02   10Mbit/s \5ms      5ms/ 10Mbit/s   h32
 #                      sw2
 # number of switches
-total_switches = 5
+total_switches = 4
 
 # bitrate of flows: f0: 3 Mbit/s, f1: 6 Mbit/s, f2: 9 Mbit/s
-flows_rate = [3, 3, 3, 6, 9]
+flows_rate = [3, 6, 9]
 # number of flows
 total_flows = len(flows_rate)
 
@@ -139,6 +139,7 @@ def updating_q_value(q, state, next_state, reward, action):
     if q[state, action] == np.NINF:
         q[state, action] = 0
     q[state, action] = q[state, action] + learning_rate * (reward + gamma * np.max(q[next_state, :]) - q[state, action])
+    print("q[{}, {}]: {}".format(state, action, q[state, action]))
 
 
 def training(total_states, r_matrix):
@@ -188,17 +189,17 @@ def main():
     # creates a graph for the above topology
     graph = Graph(total_switches)
     # adds information to graph edges: (source, destination, latency, bandwidth)
-    graph.add_edges(0, 1, 10, 10)
+    graph.add_edges(0, 1, 15, 10)
     graph.add_edges(0, 2, 5, 10)
-    graph.add_edges(0, 4, 20, 10)
+    #graph.add_edges(0, 4, 20, 10)
     graph.add_edges(1, 3, 10, 10)
     graph.add_edges(2, 3, 20, 10)
-    graph.add_edges(2, 4, 15, 10)
-    graph.add_edges(3, 4, 10, 10)
+    #graph.add_edges(2, 4, 15, 10)
+    #graph.add_edges(3, 4, 10, 10)
 
     # all flows are routed from switch0 to switch3
     s = 0
-    d = 4
+    d = 3
     # finds all paths
     paths = graph.all_paths(s, d)
     # number of paths

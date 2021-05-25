@@ -97,9 +97,16 @@ f = [i for i in range(2)] * 3
 print(f)
 print(1512 * 8 * 30 //  (10 * 1000))
 index = np.arange(0, 3)
-print(index[(1,2,3) != (1,2,4)])
+print(index[(1, 2, 3) != (1, 2, 4)])
+
 
 def get_index(lst, item):
     return [index for (index, value) in enumerate(lst) if value == item]
 
+
 print(get_index((1, 0, 0), 0))
+
+
+aa = [1, 2, 3, 4, 5]
+aa[0] = aa[0] + 3 - 2 * aa[1]
+print(aa)

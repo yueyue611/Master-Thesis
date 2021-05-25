@@ -21,8 +21,8 @@ total_flows = len(flows_rate)
 gamma = 0.9
 learning_rate = 0.8
 epsilon = 0.8
-total_episodes = 20
-max_steps = 20
+total_episodes = 100
+max_steps = 100
 
 
 class Graph:
@@ -139,6 +139,7 @@ def updating_q_value(q, state, next_state, reward, action):
     if q[state, action] == np.NINF:
         q[state, action] = 0
     q[state, action] = q[state, action] + learning_rate * (reward + gamma * np.max(q[next_state, :]) - q[state, action])
+    print("q[{}, {}]: {}".format(state, action, q[state, action]))
 
 
 def training(total_states, r_matrix):
@@ -148,6 +149,13 @@ def training(total_states, r_matrix):
         state = np.random.randint(0, total_states)
         step = 0
         while step < max_steps:
+            possible_actions = []
+            possible_q = []
+            for action in range(total_states):
+                # we can not choose actions that one flow change can not achieve
+                if r_matrix[state, action] is not None:
+                    possible_actions.append(action)
+                    possible_q.append(q[state, action])
             # chooses action
             action = choose_action(possible_actions, possible_q)
             # updates Q value
@@ -181,10 +189,13 @@ def main():
     # creates a graph for the above topology
     graph = Graph(total_switches)
     # adds information to graph edges: (source, destination, latency, bandwidth)
-    graph.add_edges(0, 1, 10, 10)
+    graph.add_edges(0, 1, 15, 10)
     graph.add_edges(0, 2, 5, 10)
+    #graph.add_edges(0, 4, 20, 10)
     graph.add_edges(1, 3, 10, 10)
-    graph.add_edges(2, 3, 5, 10)
+    graph.add_edges(2, 3, 20, 10)
+    #graph.add_edges(2, 4, 15, 10)
+    #graph.add_edges(3, 4, 10, 10)
 
     # all flows are routed from switch0 to switch3
     s = 0
