@@ -87,12 +87,14 @@ f = [i for i in range(2)] * 3
 print(f)
 c = list(itertools.permutations(f, 3))
 d = list(itertools.combinations([0, 0, 0, 1, 1, 1], 3))
-e = sorted(set(c), key=c.index)
-print("c:", c,
+#e = set(c)
+e = sorted(set(c))
+print("f:", f,
+      "\nc:", c,
       "\nd:", d,
       "\ne:", e)
 
-print(e[1][1])
+#print(e[1][1])
 f = [i for i in range(2)] * 3
 print(f)
 print(1512 * 8 * 30 //  (10 * 1000))
@@ -110,3 +112,11 @@ print(get_index((1, 0, 0), 0))
 aa = [1, 2, 3, 4, 5]
 aa[0] = aa[0] + 3 - 2 * aa[1]
 print(aa)
+
+possible_actions = [1, 3, 4, 5, 6]
+probs = [0.1, 0.4, 0.2, 0.1, 0.2]
+action = np.random.choice(possible_actions, p=probs)
+print(action)
+
+a2 = np.random.choice(a=5, size=3, replace=False, p=[0.2, 0.1, 0.3, 0.4, 0.0])
+print(a2)
