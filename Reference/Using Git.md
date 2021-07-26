@@ -16,3 +16,43 @@ see basic uses in [Basic writing and formatting syntax](https://docs.github.com/
 ## 3. Switching remote URLs from HTTPS to SSH
 
 ![Add SSH key 3](https://user-images.githubusercontent.com/39553089/110381036-3e43af80-8059-11eb-994c-3a6c0c1219ed.png)
+
+## 4. Creating branches and a pull request, updating a feature branch
+
+[Creating a branch](https://docs.github.com/en/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-and-deleting-branches-within-your-repository)
+
+```
+$ git branch try-branch
+```
+
+[Creating a pull request](https://docs.github.com/en/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request)
+
+```
+$ git checkout try-branch
+$ $ git add .
+$ git status
+$ git commit -m "comment"
+$ git push origin try-branch
+```
+
+[Updating a feature branch](https://gist.github.com/whoisryosuke/36b3b41e738394170b9a7c230665e6b9)
+
+```
+$ git checkout main
+```
+
+```
+$ git fetch origin
+$ git merge origin/main
+
+or just
+
+$ git pull origin main
+```
+
+```
+$ git checkout try-branch
+$ git merge main
+$ git push origin try-branch
+```
+
