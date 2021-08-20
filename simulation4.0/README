@@ -1,0 +1,21 @@
+./env_try4.py
+line #81 change topology 
+line #110 change flows
+
+
+./ddpg_try4.py
+line #11 change number of flows
+line #12 change number of nodes
+line #221 222 change episode and step
+line #237 select mode (default: queue length = 1, traffic load = 1.0)
+
+
+./pic
+Figure 1 2 3 are previous ones
+5flows: use self.flows = [[0, 5, 6], [0, 5, 6], [0, 4, 6], [5, 0, 6], [3, 1, 6]]
+8flows: randomly generated ones
+
+
+
+
+
