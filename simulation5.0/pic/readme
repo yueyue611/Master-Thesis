@@ -1,0 +1,14 @@
+6 nodes
+5 flows: self.flows = [[0, 5, 6], [0, 5, 6], [0, 4, 6], [5, 0, 6], [3, 1, 6]]
+
+200 episodes, 100 steps
+
+after 100 episodes: 2 randomly generated flows join in or 2 existed flows leave randomly
+
+pic:
+a: queue length LEAVE
+b: queue length JOIN
+c: queue length
+d: traffic load LEAVE
+e: traffic load JOIN
+f: traffic load
