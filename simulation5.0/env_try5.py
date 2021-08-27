@@ -64,6 +64,31 @@ class Graph:
         path = path[::-1]
         return path
 
+    def print_all_paths_helper(self, s, d, visited, path, all_path):
+        visited[s] = True
+        path.append(s)
+
+        if s ==d:
+            all_path.append(path.copy())
+        else:
+            for i in self.edges[s]:
+                if not visited[i]:
+                    self.print_all_paths_helper(i, d, visited, path, all_path)
+
+        path.pop()
+        visited[s] = False
+
+    # Prints all paths from s to d
+    def print_all_paths(self, s, d):
+        visited = [False] * self.vertices
+
+        path = []
+        all_path = []
+
+        # Call the recursive helper function to print all paths
+        self.print_all_paths_helper(s, d, visited, path, all_path)
+        return all_path
+
 
 class Env:
     def __init__(self, flows, nodes, max_bw, max_link_lt):
@@ -195,8 +220,9 @@ class Env:
 
     def step(self, action, flow_traffic, queue_length_select, a_delay, a_pkt_loss):
         action_w = np.array(action).reshape((self.total_switches, self.total_switches))
+        optimal_path = self.get_opt_path(action_w)
         state = self.get_state(action_w, flow_traffic)
-        reward, r_delay, avg_delay, r_pkt_loss = self.get_reward(state, action_w, queue_length_select, a_delay, a_pkt_loss)
+        reward, r_delay, avg_delay, r_pkt_loss = self.get_reward(state, optimal_path, queue_length_select, a_delay, a_pkt_loss)
         return state, reward, r_delay, avg_delay, r_pkt_loss
 
     # calculate delay
@@ -250,8 +276,7 @@ class Env:
         return r_pkt_loss
 
     # calculate reward
-    def get_reward(self, state, action, queue_length_select, a_delay, a_pkt_loss):
-        optimal_path = self.get_opt_path(action)
+    def get_reward(self, state, optimal_path, queue_length_select, a_delay, a_pkt_loss):
         r_delay, avg_delay = self.get_delay(state, optimal_path, queue_length_select)
         r_pkt_loss = self.get_pkt_loss(state, optimal_path, queue_length_select)
         r = - a_delay * r_delay - a_pkt_loss * r_pkt_loss
@@ -266,4 +291,11 @@ class Env:
             for j in range(len(optimal_path[i]) - 1):
                 path_latency_pro[i] += self.latency[optimal_path[i][j]][optimal_path[i][j + 1]]
         return path_latency_pro
+
+    def get_all_paths(self):
+        all_paths = [[] for i in range(0, self.total_flows)]
+        for i in range(0, self.total_flows):
+            all_paths[i] += self.graph.print_all_paths(self.flows[i][0], self.flows[i][1])
+        return all_paths
+
 
