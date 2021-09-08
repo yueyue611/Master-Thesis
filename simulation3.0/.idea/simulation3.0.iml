@@ -7,10 +7,8 @@
     <orderEntry type="jdk" jdkName="Python 3.6 (simulation3.0)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="simulation4" />
-    <orderEntry type="module" module-name="simulation4.0" />
     <orderEntry type="module" module-name="simulation5.0" />
     <orderEntry type="module" module-name="simulation6.0" />
-    <orderEntry type="module" module-name="simulation2.0" />
     <orderEntry type="module" module-name="try" />
   </component>
 </module>

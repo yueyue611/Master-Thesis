@@ -2,10 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../simulation2.0/.idea/simulation2.0.iml" filepath="$PROJECT_DIR$/../simulation2.0/.idea/simulation2.0.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/simulation3.0.iml" filepath="$PROJECT_DIR$/.idea/simulation3.0.iml" />
       <module fileurl="file://$PROJECT_DIR$/../simulation4/.idea/simulation4.iml" filepath="$PROJECT_DIR$/../simulation4/.idea/simulation4.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../simulation4.0/.idea/simulation4.0.iml" filepath="$PROJECT_DIR$/../simulation4.0/.idea/simulation4.0.iml" />
       <module fileurl="file://$PROJECT_DIR$/../simulation5.0/.idea/simulation5.0.iml" filepath="$PROJECT_DIR$/../simulation5.0/.idea/simulation5.0.iml" />
       <module fileurl="file://$PROJECT_DIR$/../simulation6.0/.idea/simulation6.0.iml" filepath="$PROJECT_DIR$/../simulation6.0/.idea/simulation6.0.iml" />
       <module fileurl="file://$PROJECT_DIR$/../try/.idea/try.iml" filepath="$PROJECT_DIR$/../try/.idea/try.iml" />

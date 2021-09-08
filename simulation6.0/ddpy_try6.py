@@ -6,7 +6,7 @@ from scipy.stats import norm
 import tensorflow as tf
 from tensorflow.keras import layers
 
-from env_try5 import Env
+from env_try6 import Env
 
 
 flows = 5
@@ -197,7 +197,7 @@ def policy(state, noise, weights_original, indicator, exploration_rate=1.0):
 
 def mode_selection():
     if mode_select == len_traffic_load:
-        index1 = 1  # queue_length = 2
+        index1 = 0  # queue_length = 1
         queue_length_select = queue_length[index1]
         flow_traffic = [flows_tl[ft][i][2] for i in range(len(flows_tl[ft]))]
     else:
@@ -308,7 +308,10 @@ for ex in range(0, experiment_num):
         flows_tl = env.get_flow_tl(traffic_load)
         flow_traffic, queue_length_select = mode_selection()
         prev_state = env.reset(weights_original, flow_traffic)
-        print("prev_state", prev_state)
+        print("Initialization",
+              "\nflows_tl: ", flows_tl,
+              "\nflow_traffic: ", flow_traffic,
+              "\nprev_state", prev_state)
 
         exploration_rate = 1.0
 
@@ -416,7 +419,7 @@ for ex in range(0, experiment_num):
         # test
         tf_prev_state_test = tf.convert_to_tensor(prev_state.reshape(1, nodes ** 2))
         action_test = policy(tf_prev_state_test, ou_noise, weights_original, 0)  # 0 for test
-        opt_path_list[ft].append(env.get_opt_path(np.array(action_test).reshape((nodes, nodes))))
+        opt_path_list[ft].append(env.get_opt_path_advance(np.array(action_test).reshape((nodes, nodes)), flow_traffic))
 
     # store result of each experiment
     ep_converged_list.append(ep_converged)
@@ -473,7 +476,7 @@ plt.ylabel("Avg. Episodic avg_delay")
 plt.show()
 
 plt.figure(4)
-for i in range(2, 3):
+for i in range(3, 4):
     plt.plot(ep_reward_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
     plt.plot(ep_reward_random_list[i], color=colors2[i], linewidth=0.5, linestyle='-', marker='^', markersize=2, label=labelsR[i])
 plt.legend()
@@ -483,7 +486,7 @@ plt.ylabel("Avg. Episodic Reward")
 plt.show()
 
 plt.figure(5)
-for i in range(2, 3):
+for i in range(3, 4):
     plt.plot(ep_r_delay_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
     plt.plot(ep_r_delay_random_list[i], color=colors2[i], linewidth=0.5, linestyle='-', marker='^', markersize=2, label=labelsR[i])
 plt.legend()
@@ -493,7 +496,7 @@ plt.ylabel("Avg. Episodic r_delay")
 plt.show()
 
 plt.figure(6)
-for i in range(2, 3):
+for i in range(3, 4):
     plt.plot(ep_avg_delay_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
     plt.plot(ep_avg_delay_random_list[i], color=colors2[i], linewidth=0.5, linestyle='-', marker='^', markersize=2, label=labelsR[i])
 plt.legend()

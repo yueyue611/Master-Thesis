@@ -138,6 +138,7 @@ class Env:
         # self.flows = [[0, 8, 10], [1, 2, 10], [4, 1, 10], [2, 7, 10], [3, 7, 10]]
         self.flows = [[0, 4, 10], [0, 4, 10], [0, 4, 10], [0, 4, 10], [2, 0, 10]]
         # self.flows = self.get_flows(self.total_flows)
+        self.flows.sort(key=lambda x: (x[0], x[1], x[2]))
 
     def get_flows(self, number):
         flows = [[0 for _ in range(3)] for _ in range(number)]
@@ -168,7 +169,6 @@ class Env:
         else:
             self.flows = copy.deepcopy(old_flows)
         self.total_flows = len(self.flows)
-        print("flows: ", self.flows)
 
     def get_original(self):
         return self.weights, self.flows
@@ -184,13 +184,51 @@ class Env:
         for i in range(len(traffic_load)):
             for j in range(self.total_flows):
                 flows_tl[i][j][2] *= traffic_load[i]
-        print("flows_tl: ", flows_tl)
         return flows_tl
 
+    # get optimal path using dijkstra
     def get_opt_path(self, weights):
         opt_path = []
         for i in range(len(self.flows)):
             opt_path.append(self.graph.dijkstra(self.flows[i][0], self.flows[i][1], weights))
+        return opt_path
+
+    # get optimal path for different groups
+    # weights here is action
+    def get_opt_path_advance(self, weights, flow_traffic):
+        opt_path = []
+        flows_group = [[self.flows[0][0], self.flows[0][1], [flow_traffic[0]]]]
+        index = 0
+        for i in range(1, self.total_flows):
+            if self.flows[i][0] == flows_group[index][0] and self.flows[i][1] == flows_group[index][1]:
+                flows_group[index][2].append(flow_traffic[i])
+            else:
+                flows_group.append([self.flows[i][0], self.flows[i][1], [flow_traffic[i]]])
+                index += 1
+        for j in range(0, len(flows_group)):
+            if len(flows_group[j][2]) == 1:
+                opt_path.append(self.graph.dijkstra(flows_group[j][0], flows_group[j][1], weights))
+            else:
+                all_paths_onepair = self.graph.print_all_paths(flows_group[j][0], flows_group[j][1])
+                for k in range(0, len(all_paths_onepair)):
+                    distance = 0
+                    for l in range(0, len(all_paths_onepair[k])-1):
+                        distance += weights[all_paths_onepair[k][l]][all_paths_onepair[k][l+1]]
+                    all_paths_onepair[k].append(distance)
+                # all possible paths are sorted according to the aggregated weights
+                all_paths_onepair.sort(key=lambda x: (x[-1]))
+                #print("all_paths_onepair_sort:", all_paths_onepair)
+                path_id = 0
+                start = 0
+                opt_path.append(all_paths_onepair[path_id][:-1])  # [:-1]: exclude the last item distance
+                for end in range(1, len(flows_group[j][2])):
+                    if sum(flows_group[j][2][start:end+1]) <= self.max_bandwidth:
+                        opt_path.append(all_paths_onepair[path_id][:-1])
+                    else:
+                        path_id = (path_id + 1) % len(all_paths_onepair)
+                        opt_path.append(all_paths_onepair[path_id][:-1])
+                        start = end
+        #print("path: ", opt_path)
         return opt_path
 
     # get state
@@ -216,10 +254,18 @@ class Env:
 
     def step(self, action, flow_traffic, queue_length_select, a_delay, a_pkt_loss):
         action_w = np.array(action).reshape((self.total_switches, self.total_switches))
-        optimal_path = self.get_opt_path(action_w)
+        optimal_path = self.get_opt_path_advance(action_w, flow_traffic)  # modify!!!
         state = self.get_state(optimal_path, flow_traffic)
         reward, r_delay, avg_delay, r_pkt_loss = self.get_reward(state, optimal_path, queue_length_select, a_delay, a_pkt_loss)
         return state, reward, r_delay, avg_delay, r_pkt_loss
+
+    # calculate propagation latency of each path
+    def get_path_latency_pro(self, optimal_path):
+        path_latency_pro = [0 for _ in range(len(optimal_path))]
+        for i in range(len(optimal_path)):
+            for j in range(len(optimal_path[i]) - 1):
+                path_latency_pro[i] += self.latency[optimal_path[i][j]][optimal_path[i][j + 1]]
+        return path_latency_pro
 
     # calculate delay
     def get_delay(self, state, optimal_path, queue_length_select):
@@ -262,7 +308,9 @@ class Env:
                 p = 0  # packet loss probability
                 sum_bandwidth = state[i][j] + state[j][i]
                 sum_flow = flow_per_link[i][j] + flow_per_link[j][i]
-                if sum_bandwidth > self.bandwidth[i][j] and sum_flow > queue_length_select:
+                # more than num flows on the same link would result in packet loss
+                num = queue_length_select
+                if sum_bandwidth > self.bandwidth[i][j] and sum_flow > num:
                     p = 1 - self.bandwidth[i][j] / sum_bandwidth
                 # take non-zero p into account
                 if p != 0:
@@ -280,15 +328,7 @@ class Env:
         #print("reward: ", r)
         return r, r_delay, avg_delay, r_pkt_loss
 
-    # calculate propagation latency of each path
-    def get_path_latency_pro(self, optimal_path):
-        path_latency_pro = [0 for _ in range(len(optimal_path))]
-        for i in range(len(optimal_path)):
-            for j in range(len(optimal_path[i]) - 1):
-                path_latency_pro[i] += self.latency[optimal_path[i][j]][optimal_path[i][j + 1]]
-        return path_latency_pro
-
-    # get all paths between one source-destination pair
+    # get all paths for each flow
     def get_all_paths(self):
         all_paths = [[] for i in range(0, self.total_flows)]
         for i in range(0, self.total_flows):
