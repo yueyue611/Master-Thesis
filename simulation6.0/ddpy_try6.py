@@ -250,8 +250,8 @@ print("original flows: ", flows_original)
 mode_select = len_traffic_load  # len_traffic_load or len_queue_length
 
 # determine if there is joining or leaving flows after N episodes
-N = 100
-mode_flow_change = "NONE"  # "JOIN" or "LEAVE" or "NONE"
+N = 50
+mode_flow_change = "JOIN"  # "JOIN" or "LEAVE" or "NONE"
 changed_flows_num = 2
 new_flows = env.new_flows(mode_flow_change, changed_flows_num)
 

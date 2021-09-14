@@ -249,7 +249,8 @@ class Env:
         return flow_per_link
 
     def reset(self, weights, flow_traffic):
-        prev_state = self.get_state(weights, flow_traffic)
+        opt_path = self.get_opt_path(weights)
+        prev_state = self.get_state(opt_path, flow_traffic)
         return prev_state
 
     def step(self, action, flow_traffic, queue_length_select, a_delay, a_pkt_loss):
