@@ -6,7 +6,7 @@ from scipy.stats import norm
 import tensorflow as tf
 from tensorflow.keras import layers
 
-from env_try6 import Env
+from env_try7 import Env
 
 
 flows = 5
@@ -173,7 +173,7 @@ class CriticNetwork:
 
 
 def policy(state, noise, weights_original, indicator, exploration_rate=1.0):
-    weights = np.array(weights_original).reshape(1, nodes ** 2)
+    weights = np.array(weights_original+weights_original).reshape(1, nodes ** 2 * 2)
     sampled_actions = actor_model(state)
     noise = noise()
     noise_dec = exploration_rate * noise
@@ -230,8 +230,8 @@ tau = 0.005
 a_delay = 1.0
 a_pkt_loss = 1000
 
-total_episodes = 5
-total_steps = 1
+total_episodes = 500
+total_steps = 100
 
 # set up different traffic load level
 traffic_load = [0.2, 0.3, 0.5, 0.7, 1.0, 1.2]
@@ -346,7 +346,7 @@ for ex in range(0, experiment_num):
                 # update exploration rate
                 exploration_rate -= 1.0 / (total_episodes * total_steps)
 
-                # shape: (nodes ** 2, )
+                # shape: (nodes ** 2 * 2, )
                 action = policy(tf_prev_state, ou_noise, weights_original, 1, exploration_rate)  # 1 for training
 
                 # receive state and reward from environment
@@ -419,7 +419,7 @@ for ex in range(0, experiment_num):
         # test
         tf_prev_state_test = tf.convert_to_tensor(prev_state.reshape(1, nodes ** 2))
         action_test = policy(tf_prev_state_test, ou_noise, weights_original, 0)  # 0 for test
-        opt_path_list[ft].append(env.get_opt_path_advance(np.array(action_test).reshape((nodes, nodes)), flow_traffic))
+        opt_path_list[ft].append(env.get_opt_path_advance(np.array(action_test).reshape((nodes * 2, nodes)), flow_traffic))
 
     # store result of each experiment
     ep_converged_list.append(ep_converged)

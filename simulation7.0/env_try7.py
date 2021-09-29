@@ -139,7 +139,6 @@ class Env:
         self.flows = [[0, 4, 10], [0, 4, 10], [0, 4, 10], [0, 4, 10], [2, 0, 10]]
         # np.random.seed(0)
         # self.flows = self.get_flows(self.total_flows)  # randomly generated flows
-        # print("flows before sorting: ", self.flows)
         self.flows.sort(key=lambda x: (x[0], x[1], x[2]))
 
     def get_flows(self, number):
@@ -178,7 +177,7 @@ class Env:
 
     def observation_space(self):
         state_dim = self.total_switches ** 2
-        action_dim = self.total_switches ** 2
+        action_dim = self.total_switches ** 2 * 2
         return state_dim, action_dim
 
     def get_flow_tl(self, traffic_load):
@@ -198,7 +197,7 @@ class Env:
 
     # get optimal path for different groups
     # weights here is action
-    def get_opt_path_advance(self, weights, flow_traffic):
+    def get_opt_path_advance(self, action, flow_traffic):
         opt_path = []
         flows_group = [[self.flows[0][0], self.flows[0][1], [flow_traffic[0]]]]
         index = 0
@@ -209,23 +208,26 @@ class Env:
                 flows_group.append([self.flows[i][0], self.flows[i][1], [flow_traffic[i]]])
                 index += 1
         for j in range(0, len(flows_group)):
-            if len(flows_group[j][2]) == 1:
-                opt_path.append(self.graph.dijkstra(flows_group[j][0], flows_group[j][1], weights))
+            if len(flows_group[j][2]) == 1:  # only one element in this group
+                opt_path.append(self.graph.dijkstra(flows_group[j][0], flows_group[j][1], action[:5]))
             else:
                 all_paths_onepair = self.graph.print_all_paths(flows_group[j][0], flows_group[j][1])
                 for k in range(0, len(all_paths_onepair)):
                     distance = 0
+                    bandwidth = 1
                     for l in range(0, len(all_paths_onepair[k])-1):
-                        distance += weights[all_paths_onepair[k][l]][all_paths_onepair[k][l+1]]
-                    all_paths_onepair[k].append(distance)
+                        distance += action[all_paths_onepair[k][l]][all_paths_onepair[k][l+1]]
+                        bandwidth = min(bandwidth, action[all_paths_onepair[k][l] + self.total_switches][all_paths_onepair[k][l+1]])
+                    all_paths_onepair[k].append([distance, bandwidth])
                 # all possible paths are sorted according to the aggregated weights
-                all_paths_onepair.sort(key=lambda x: (x[-1]))
+                all_paths_onepair.sort(key=lambda x: (x[-1][0]))
                 #print("all_paths_onepair_sort:", all_paths_onepair)
                 path_id = 0
                 start = 0
                 opt_path.append(all_paths_onepair[path_id][:-1])  # [:-1]: exclude the last item distance
                 for end in range(1, len(flows_group[j][2])):
-                    if sum(flows_group[j][2][start:end+1]) <= self.max_bandwidth:
+                    if sum(flows_group[j][2][start:end+1]) <= \
+                            self.max_bandwidth * all_paths_onepair[path_id][-1][1] * self.total_flows:
                         opt_path.append(all_paths_onepair[path_id][:-1])
                     else:
                         path_id = (path_id + 1) % len(all_paths_onepair)
@@ -257,8 +259,8 @@ class Env:
         return prev_state
 
     def step(self, action, flow_traffic, queue_length_select, a_delay, a_pkt_loss):
-        action_w = np.array(action).reshape((self.total_switches, self.total_switches))
-        optimal_path = self.get_opt_path_advance(action_w, flow_traffic)  # modify!!! previous: get_opt_path
+        action_w = np.array(action).reshape((self.total_switches * 2, self.total_switches))
+        optimal_path = self.get_opt_path_advance(action_w, flow_traffic)  # modify!!!
         state = self.get_state(optimal_path, flow_traffic)
         reward, r_delay, avg_delay, r_pkt_loss = self.get_reward(state, optimal_path, queue_length_select, a_delay, a_pkt_loss)
         return state, reward, r_delay, avg_delay, r_pkt_loss
@@ -319,7 +321,7 @@ class Env:
                 # take non-zero p into account
                 if p != 0:
                     cost.append(p ** 2)
-        r_pkt_loss = math.sqrt(sum(cost) / (self.total_edges / 2))  # all links are bidirectional
+        r_pkt_loss = math.sqrt(sum(cost) / (self.total_edges / 2))
         #print("r_pkt_loss: ", r_pkt_loss)
         return r_pkt_loss
 
