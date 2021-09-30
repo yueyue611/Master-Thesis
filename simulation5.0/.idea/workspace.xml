@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c936c2e4-e36c-481c-b97d-143ae041f822" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../Reference/TUD-Script_v2.06j_Unix.zip" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation6.0/ddpy_try6.py" beforeDir="false" afterPath="$PROJECT_DIR$/../simulation6.0/ddpy_try6.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation6.0/env_try6.py" beforeDir="false" afterPath="$PROJECT_DIR$/../simulation6.0/env_try6.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

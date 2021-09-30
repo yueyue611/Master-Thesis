@@ -4,16 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="da23a88a-44e5-481f-9f87-72ed0ffcb739" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../simulation7.0/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../simulation7.0/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../simulation7.0/ddpy_try7.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../simulation7.0/env_try7.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+    <list default="true" id="da23a88a-44e5-481f-9f87-72ed0ffcb739" name="Changes" comment="Changes">
+      <change beforePath="$PROJECT_DIR$/../simulation5.0/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../simulation5.0/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/simulation6.0.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/simulation6.0.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ddpy_try6.py" beforeDir="false" afterPath="$PROJECT_DIR$/ddpy_try6.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/env_try6.py" beforeDir="false" afterPath="$PROJECT_DIR$/env_try6.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pic/Figure_1.png" beforeDir="false" afterPath="$PROJECT_DIR$/pic/Figure_1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../simulation7.0/.idea/simulation7.0.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../simulation7.0/.idea/simulation7.0.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../simulation7.0/ddpy_try7.py" beforeDir="false" afterPath="$PROJECT_DIR$/../simulation7.0/ddpy_try7.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,6 +19,9 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedIndex" value="1" />
   </component>
   <component name="ProjectId" id="1xx2SAaBZbU7F888IrVdgQ451VT" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -32,7 +32,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../simulation7.0" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">

@@ -1,4 +1,6 @@
 import math
+import time
+
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import norm
@@ -211,6 +213,7 @@ def mode_selection():
 training
 """
 
+start = time.time()
 
 ou_noise = OUNoise(action_dim)
 
@@ -230,7 +233,7 @@ tau = 0.005
 a_delay = 1.0
 a_pkt_loss = 1000
 
-total_episodes = 500
+total_episodes = 300
 total_steps = 100
 
 # set up different traffic load level
@@ -256,7 +259,7 @@ changed_flows_num = 2
 new_flows = env.new_flows(mode_flow_change, changed_flows_num)
 
 # number of test experiments
-experiment_num = 1
+experiment_num = 20
 # to store history of each experiment
 ep_converged_list = []
 reward_converged_list = []
@@ -432,6 +435,9 @@ for ex in range(0, experiment_num):
 print(ep_converged_list)
 print(reward_converged_list)
 
+end = time.time()
+runtime = end - start
+print("runtime: ", runtime)
 
 # plot graph
 # episodes versus Avg. Rewards
