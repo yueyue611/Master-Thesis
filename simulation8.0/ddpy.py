@@ -4,25 +4,27 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import norm
+import pandas as pd
 
 import tensorflow as tf
 from tensorflow.keras import layers
 
-from env_try7 import Env
+from env import Env
+from config import Config
 
 
-flows = 5
-nodes = 5  # consistent with graph
-max_bw = 10
-max_link_lt = 10
+flows = Config.flows
+nodes = Config.nodes
+max_bw = Config.max_bw
+max_link_lt = Config.max_link_lt
 env = Env(flows, nodes, max_bw, max_link_lt)
 
 state_dim, action_dim = env.observation_space()
 print("Size of State Space ->  {}".format(state_dim))
 print("Size of Action Space ->  {}".format(action_dim))
 
-upper_bound = 1
-lower_bound = 0
+upper_bound = Config.upper_bound
+lower_bound = Config.lower_bound
 
 
 # Ornstein-Uhlenbeck noise
@@ -83,7 +85,8 @@ class Buffer:
 
     # decorate with tf.function
     @tf.function
-    def update(self, state_batch, action_batch, reward_batch, next_state_batch):
+    def update(self, state_batch, action_batch, reward_batch, next_state_batch, actor_model, critic_model,
+               target_actor_model, target_critic_model, actor_optimizer, critic_optimizer, gamma):
         # train and update critic and actor network
         # open a GradientTape
         with tf.GradientTape() as tape:
@@ -108,7 +111,8 @@ class Buffer:
         actor_optimizer.apply_gradients(zip(actor_grad, actor_model.trainable_variables))
 
     # randomly sample batch_size examples and update parameters
-    def learn(self):
+    def learn(self, actor_model, critic_model, target_actor_model, target_critic_model, actor_optimizer,
+              critic_optimizer, gamma):
         # get sampling range
         record_range = min(self.experience_counter, self.buffer_capacity)
         # randomly sample indices
@@ -121,7 +125,8 @@ class Buffer:
         reward_batch = tf.cast(reward_batch, dtype=tf.float32)
         next_state_batch = tf.convert_to_tensor(self.next_state_buffer[batch_indices])
 
-        self.update(state_batch, action_batch, reward_batch, next_state_batch)
+        self.update(state_batch, action_batch, reward_batch, next_state_batch, actor_model, critic_model,
+                    target_actor_model, target_critic_model, actor_optimizer, critic_optimizer, gamma)
 
 
 @tf.function
@@ -174,7 +179,7 @@ class CriticNetwork:
         return model
 
 
-def policy(state, noise, weights_original, indicator, exploration_rate=1.0):
+def policy(actor_model, state, noise, weights_original, indicator, exploration_rate=1.0):
     weights = np.array(weights_original+weights_original).reshape(1, nodes ** 2 * 2)
     sampled_actions = actor_model(state)
     noise = noise()
@@ -197,7 +202,7 @@ def policy(state, noise, weights_original, indicator, exploration_rate=1.0):
     return action
 
 
-def mode_selection():
+def mode_selection(mode_select, len_traffic_load, queue_length, flows_tl, ft):
     if mode_select == len_traffic_load:
         index1 = 0  # queue_length = 1
         queue_length_select = queue_length[index1]
@@ -213,63 +218,55 @@ def mode_selection():
 training
 """
 
-start = time.time()
 
-ou_noise = OUNoise(action_dim)
+def main():
+    ou_noise = OUNoise(action_dim)
 
-# Learning rate for actor-critic models
-critic_lr = 0.002
-actor_lr = 0.001
+    # Learning rate for actor-critic models
+    critic_lr = Config.critic_lr
+    actor_lr = Config.actor_lr
 
-# optimizer implements the Adam algorithm
-critic_optimizer = tf.keras.optimizers.Adam(critic_lr)
-actor_optimizer = tf.keras.optimizers.Adam(actor_lr)
+    # optimizer implements the Adam algorithm
+    critic_optimizer = tf.keras.optimizers.Adam(critic_lr)
+    actor_optimizer = tf.keras.optimizers.Adam(actor_lr)
 
-# discount factor for future rewards
-gamma = 0.99
-# used to update target networks
-tau = 0.005
+    # discount factor for future rewards
+    gamma = Config.gamma
+    # used to update target networks
+    tau = Config.tau
 
-a_delay = 1.0
-a_pkt_loss = 1000
+    a_delay = Config.a_delay
+    a_pkt_loss = Config.a_pkt_loss
 
-total_episodes = 300
-total_steps = 100
+    total_episodes = Config.total_episodes
+    total_steps = Config.total_steps
 
-# set up different traffic load level
-traffic_load = [0.2, 0.3, 0.5, 0.7, 1.0, 1.2]
-len_traffic_load = len(traffic_load)
+    # set up different traffic load level
+    traffic_load = Config.traffic_load
+    len_traffic_load = len(traffic_load)
 
-# set up different queue length
-queue_length = [1, 2, 3]
-# queue_length = [i for i in range(1, flows + 1)]
-len_queue_length = len(queue_length)
+    # set up different queue length
+    queue_length = Config.queue_length
+    len_queue_length = len(queue_length)
 
-# original link weights matrix
-weights_original, flows_original = env.get_original()
-print("original flows: ", flows_original)
+    # original link weights matrix
+    weights_original, flows_original = env.get_original()
+    print("original flows: ", flows_original)
 
-# measure performance according to queue length or traffic load
-mode_select = len_traffic_load  # len_traffic_load or len_queue_length
+    # store all paths
+    all_paths = env.get_all_paths()
+    print("all_paths:", all_paths)
 
-# determine if there is joining or leaving flows after N episodes
-N = 50
-mode_flow_change = "NONE"  # "JOIN" or "LEAVE" or "NONE"
-changed_flows_num = 2
-new_flows = env.new_flows(mode_flow_change, changed_flows_num)
+    # measure performance according to queue length or traffic load
+    mode = Config.mode  # "TL" or "QL"
+    mode_select = Config.mode_select
 
-# number of test experiments
-experiment_num = 30
-# to store history of each experiment
-ep_converged_list = []
-reward_converged_list = []
+    # determine if there is joining or leaving flows after N episodes
+    N = Config.N
+    mode_flow_change = Config.mode_flow_change
+    changed_flows_num = Config.changed_flows_num
+    new_flows = env.new_flows(mode_flow_change, changed_flows_num)
 
-# store all paths
-all_paths = env.get_all_paths()
-print("all_paths:", all_paths)
-
-
-for ex in range(0, experiment_num):
     # to store reward history of each episode
     ep_reward_list = [[] for i in range(mode_select)]
     ep_r_delay_list = [[] for i in range(mode_select)]
@@ -309,7 +306,7 @@ for ex in range(0, experiment_num):
         # initialization
         env.update_flows("NONE", new_flows, flows_original)
         flows_tl = env.get_flow_tl(traffic_load)
-        flow_traffic, queue_length_select = mode_selection()
+        flow_traffic, queue_length_select = mode_selection(mode_select, len_traffic_load, queue_length, flows_tl, ft)
         prev_state = env.reset(weights_original, flow_traffic)
         print("Initialization",
               "\nflows_tl: ", flows_tl,
@@ -319,7 +316,7 @@ for ex in range(0, experiment_num):
         exploration_rate = 1.0
 
         for ep in range(total_episodes):
-            print("experiment {} case {}: episode {} begins!".format(ex, ft, ep))
+            print("case {}: episode {} begins!".format(ft, ep))
 
             episodic_reward = 0
             episodic_r_delay = 0
@@ -336,7 +333,8 @@ for ex in range(0, experiment_num):
                 if mode_flow_change != "NONE":
                     env.update_flows(mode_flow_change, new_flows, flows_original)
                     flows_tl = env.get_flow_tl(traffic_load)
-                    flow_traffic, queue_length_select = mode_selection()
+                    flow_traffic, queue_length_select = mode_selection(mode_select, len_traffic_load, queue_length,
+                                                                       flows_tl, ft)
                     # use action from last episode
                     action = np.array(action).reshape((nodes, nodes))
                     prev_state = env.reset(action, flow_traffic)
@@ -350,7 +348,8 @@ for ex in range(0, experiment_num):
                 exploration_rate -= 1.0 / (total_episodes * total_steps)
 
                 # shape: (nodes ** 2 * 2, )
-                action = policy(tf_prev_state, ou_noise, weights_original, 1, exploration_rate)  # 1 for training
+                # 1 for training
+                action = policy(actor_model, tf_prev_state, ou_noise, weights_original, 1, exploration_rate)
 
                 # receive state and reward from environment
                 state, reward, r_delay, avg_delay, r_pkt_loss = env.step(action, flow_traffic, queue_length_select,
@@ -363,10 +362,12 @@ for ex in range(0, experiment_num):
                 episodic_avg_delay += avg_delay
                 episodic_r_pkt_loss += - r_pkt_loss
 
-                buffer.learn()
+                buffer.learn(actor_model, critic_model, target_actor_model, target_critic_model, actor_optimizer,
+                             critic_optimizer, gamma)
                 update_target_weights(target_actor_model.variables, actor_model.variables, tau)
                 update_target_weights(target_critic_model.variables, critic_model.variables, tau)
 
+                # update state
                 prev_state = state
 
                 # random selection
@@ -384,11 +385,8 @@ for ex in range(0, experiment_num):
             ep_r_delay_list[ft].append(episodic_r_delay / total_steps)
             ep_avg_delay_list[ft].append(episodic_avg_delay / total_steps)
             ep_r_pkt_loss_list[ft].append(episodic_r_pkt_loss / total_steps)
-            """
-            print("Episode * {} * Avg Reward is ==> {}".format(ep, ep_reward_list[ft][-1]))
-            print("Episode * {} * Avg r_delay is ==> {}".format(ep, ep_r_delay_list[ft][-1]))
-            print("Episode * {} * Avg r_pkt_loss is ==> {}".format(ep, ep_r_pkt_loss_list[ft][-1]))
-            """
+
+            # random case
             ep_reward_random_list[ft].append(episodic_reward_random / total_steps)
             ep_r_delay_random_list[ft].append(episodic_r_delay_random / total_steps)
             ep_avg_delay_random_list[ft].append(episodic_avg_delay_random / total_steps)
@@ -409,7 +407,6 @@ for ex in range(0, experiment_num):
 
             # to see whether the total reward has converged, sliding window size = 10
             cost = 0
-            RMSD = np.Inf
             for i in range(0, min(10, ep + 1)):
                 cost += (ep_reward_list[ft][-1 - i] - avg_reward) ** 2
             RMSD = math.sqrt(cost / min(10, ep + 1))
@@ -417,162 +414,169 @@ for ex in range(0, experiment_num):
             if RMSD < 0.001 and ep_converged[ft] == 0 and ep >= 10:
                 ep_converged[ft] = ep + 1
                 reward_converged[ft] = ep_reward_list[ft][-1]
-            # print("ep_converged: ", ep_converged)
 
         # test
         tf_prev_state_test = tf.convert_to_tensor(prev_state.reshape(1, nodes ** 2))
-        action_test = policy(tf_prev_state_test, ou_noise, weights_original, 0)  # 0 for test
-        opt_path_list[ft].append(env.get_opt_path_advance(np.array(action_test).reshape((nodes * 2, nodes)), flow_traffic))
-
-    # store result of each experiment
-    ep_converged_list.append(ep_converged)
-    reward_converged_list.append(reward_converged)
-
+        action_test = policy(actor_model, tf_prev_state_test, ou_noise, weights_original, 0)  # 0 for test
+        opt_path_list[ft].append(env.get_opt_path_advance(np.array(action_test).reshape((nodes * 2, nodes)),
+                                                          flow_traffic))
     print("opt_path_list", opt_path_list)
-    print("converged episode: ", ep_converged)
-    print("converged reward: ", reward_converged)
 
-print(ep_converged_list)
-print(reward_converged_list)
+    # create csv
+    # No.{x}
+    x = 1
+    df = pd.DataFrame(ep_reward_list)
+    df.to_csv("/home/tud/Github/Master-Thesis/simulation8.0/csv/No.{}, {}, {}, {}, {}.csv"
+              .format(x, total_episodes, total_steps, mode, mode_flow_change), header=False, index=False)
 
-end = time.time()
-runtime = end - start
-print("runtime: ", runtime)
+    df = pd.DataFrame(reward_converged)
+    df.to_csv("/home/tud/Github/Master-Thesis/simulation8.0/csv/CR: No.{}, {}, {}, {}, {}.csv"
+              .format(x, total_episodes, total_steps, mode, mode_flow_change),header=False, index=False)
 
-# plot graph
-# episodes versus Avg. Rewards
-colors = ['r', 'y', 'g', 'c', 'b', 'm', 'gray', 'orange', 'purple', 'pink']
-colors2 = ['gray', 'orange', 'purple', 'pink', 'r', 'y', 'g', 'c', 'b', 'm']
-labels_1 = ['TL=0.2', 'TL=0.3', 'TL=0.5', 'TL=0.7', 'TL=1.0', 'TL=1.2']
-labels_2 = ['QL=1', 'QL=2', 'QL=3']
-labels_1R = ['Random TL=0.2', 'Random TL=0.3', 'Random TL=0.5', 'Random TL=0.7', 'Random TL=1.0', 'Random TL=1.2']
-labels_2R = ['Random QL=1', 'Random QL=2', 'Random QL=3']
-if mode_select == len_traffic_load:
-    labels = labels_1
-    labelsR = labels_1R
-else:
-    labels = labels_2
-    labelsR = labels_2R
 
-plt.figure(1)
-for i in range(mode_select):
-    plt.plot(ep_reward_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
-plt.legend()
-plt.xlabel("Episode")
-plt.ylabel("Avg. Episodic Reward")
-# plt.savefig('Avg. Episodic Reward.png', dpi=300, bbox_inches='tight')
-plt.show()
+    # plot graph
+    # episodes versus Avg. Rewards
+    colors = ['r', 'y', 'g', 'c', 'b', 'm', 'gray', 'orange', 'purple', 'pink']
+    colors2 = ['gray', 'orange', 'purple', 'pink', 'r', 'y', 'g', 'c', 'b', 'm']
+    labels_1 = ['TL=0.2', 'TL=0.3', 'TL=0.5', 'TL=0.7', 'TL=1.0', 'TL=1.2']
+    labels_2 = ['QL=1', 'QL=2', 'QL=3']
+    labels_1R = ['Random TL=0.2', 'Random TL=0.3', 'Random TL=0.5', 'Random TL=0.7', 'Random TL=1.0', 'Random TL=1.2']
+    labels_2R = ['Random QL=1', 'Random QL=2', 'Random QL=3']
+    if mode_select == len_traffic_load:
+        labels = labels_1
+        labelsR = labels_1R
+    else:
+        labels = labels_2
+        labelsR = labels_2R
 
-plt.figure(2)
-for i in range(mode_select):
-    plt.plot(ep_r_delay_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
-plt.legend()
-plt.xlabel("Episode")
-plt.ylabel("Avg. Episodic r_delay")
-# plt.savefig('Avg. Episodic r_delay.png', dpi=300, bbox_inches='tight')
-plt.show()
+    plt.figure(1)
+    for i in range(mode_select):
+        plt.plot(ep_reward_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
+    plt.legend()
+    plt.xlabel("Episode")
+    plt.ylabel("Avg. Episodic Reward")
+    # plt.savefig('Avg. Episodic Reward.png', dpi=300, bbox_inches='tight')
+    plt.show()
 
-plt.figure(3)
-for i in range(mode_select):
-    plt.plot(ep_avg_delay_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
-plt.legend()
-plt.xlabel("Episode")
-plt.ylabel("Avg. Episodic avg_delay")
-# plt.savefig('Avg. Episodic r_delay.png', dpi=300, bbox_inches='tight')
-plt.show()
+    plt.figure(2)
+    for i in range(mode_select):
+        plt.plot(ep_r_delay_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
+    plt.legend()
+    plt.xlabel("Episode")
+    plt.ylabel("Avg. Episodic r_delay")
+    # plt.savefig('Avg. Episodic r_delay.png', dpi=300, bbox_inches='tight')
+    plt.show()
 
-plt.figure(4)
-for i in range(3, 4):
-    plt.plot(ep_reward_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
-    plt.plot(ep_reward_random_list[i], color=colors2[i], linewidth=0.5, linestyle='-', marker='^', markersize=2, label=labelsR[i])
-plt.legend()
-plt.xlabel("Episode")
-plt.ylabel("Avg. Episodic Reward")
-# plt.savefig('Avg. Episodic Reward.png', dpi=300, bbox_inches='tight')
-plt.show()
+    plt.figure(3)
+    for i in range(mode_select):
+        plt.plot(ep_avg_delay_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
+    plt.legend()
+    plt.xlabel("Episode")
+    plt.ylabel("Avg. Episodic avg_delay")
+    # plt.savefig('Avg. Episodic r_delay.png', dpi=300, bbox_inches='tight')
+    plt.show()
 
-plt.figure(5)
-for i in range(3, 4):
-    plt.plot(ep_r_delay_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
-    plt.plot(ep_r_delay_random_list[i], color=colors2[i], linewidth=0.5, linestyle='-', marker='^', markersize=2, label=labelsR[i])
-plt.legend()
-plt.xlabel("Episode")
-plt.ylabel("Avg. Episodic r_delay")
-# plt.savefig('Avg. Episodic r_delay.png', dpi=300, bbox_inches='tight')
-plt.show()
+    plt.figure(4)
+    for i in range(3, 4):
+        plt.plot(ep_reward_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
+        plt.plot(ep_reward_random_list[i], color=colors2[i], linewidth=0.5, linestyle='-', marker='^', markersize=2, label=labelsR[i])
+    plt.legend()
+    plt.xlabel("Episode")
+    plt.ylabel("Avg. Episodic Reward")
+    # plt.savefig('Avg. Episodic Reward.png', dpi=300, bbox_inches='tight')
+    plt.show()
 
-plt.figure(6)
-for i in range(3, 4):
-    plt.plot(ep_avg_delay_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
-    plt.plot(ep_avg_delay_random_list[i], color=colors2[i], linewidth=0.5, linestyle='-', marker='^', markersize=2, label=labelsR[i])
-plt.legend()
-plt.xlabel("Episode")
-plt.ylabel("Avg. Episodic avg_delay")
-# plt.savefig('Avg. Episodic r_delay.png', dpi=300, bbox_inches='tight')
-plt.show()
+    plt.figure(5)
+    for i in range(3, 4):
+        plt.plot(ep_r_delay_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
+        plt.plot(ep_r_delay_random_list[i], color=colors2[i], linewidth=0.5, linestyle='-', marker='^', markersize=2, label=labelsR[i])
+    plt.legend()
+    plt.xlabel("Episode")
+    plt.ylabel("Avg. Episodic r_delay")
+    # plt.savefig('Avg. Episodic r_delay.png', dpi=300, bbox_inches='tight')
+    plt.show()
 
-plt.figure(7)
-for i in range(mode_select):
-    plt.plot(ep_r_pkt_loss_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
-plt.legend()
-plt.xlabel("Episode")
-plt.ylabel("Avg. Episodic r_pkt_loss")
-# plt.savefig('Avg. Episodic r_pkt_loss.png', dpi=300, bbox_inches='tight')
-plt.show()
+    plt.figure(6)
+    for i in range(3, 4):
+        plt.plot(ep_avg_delay_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
+        plt.plot(ep_avg_delay_random_list[i], color=colors2[i], linewidth=0.5, linestyle='-', marker='^', markersize=2, label=labelsR[i])
+    plt.legend()
+    plt.xlabel("Episode")
+    plt.ylabel("Avg. Episodic avg_delay")
+    # plt.savefig('Avg. Episodic r_delay.png', dpi=300, bbox_inches='tight')
+    plt.show()
 
-plt.figure(8)
-for i in range(mode_select):
-    plt.plot(avg_reward_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
-plt.legend()
-plt.xlabel("Episode")
-plt.ylabel("Avg. Reward of Last 10 Episodes")
-plt.show()
+    plt.figure(7)
+    for i in range(mode_select):
+        plt.plot(ep_r_pkt_loss_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
+    plt.legend()
+    plt.xlabel("Episode")
+    plt.ylabel("Avg. Episodic r_pkt_loss")
+    # plt.savefig('Avg. Episodic r_pkt_loss.png', dpi=300, bbox_inches='tight')
+    plt.show()
 
-plt.figure(9)
-for i in range(mode_select):
-    plt.plot(avg_r_delay_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
-plt.legend()
-plt.xlabel("Episode")
-plt.ylabel("Avg. r_delay of Last 10 Episodes")
-plt.show()
+    plt.figure(8)
+    for i in range(mode_select):
+        plt.plot(avg_reward_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
+    plt.legend()
+    plt.xlabel("Episode")
+    plt.ylabel("Avg. Reward of Last 10 Episodes")
+    plt.show()
 
-plt.figure(10)
-for i in range(mode_select):
-    plt.plot(avg_avg_delay_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
-plt.legend()
-plt.xlabel("Episode")
-plt.ylabel("Avg. avg_delay of Last 10 Episodes")
-plt.show()
+    plt.figure(9)
+    for i in range(mode_select):
+        plt.plot(avg_r_delay_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
+    plt.legend()
+    plt.xlabel("Episode")
+    plt.ylabel("Avg. r_delay of Last 10 Episodes")
+    plt.show()
 
-plt.figure(11)
-for i in range(mode_select):
-    plt.plot(avg_r_pkt_loss_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
-plt.legend()
-plt.xlabel("Episode")
-plt.ylabel("Avg. r_pkt_loss of last 10 Episodes")
-plt.show()
+    plt.figure(10)
+    for i in range(mode_select):
+        plt.plot(avg_avg_delay_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
+    plt.legend()
+    plt.xlabel("Episode")
+    plt.ylabel("Avg. avg_delay of Last 10 Episodes")
+    plt.show()
 
-plt.figure(12)
-plt.plot(ep_converged, color=colors[0], linewidth=0.5, linestyle='--', marker='o')
-plt.xlabel("Traffic Load / Queue Length")
-plt.ylabel("Number of Episode till Convergence")
-plt.show()
+    plt.figure(11)
+    for i in range(mode_select):
+        plt.plot(avg_r_pkt_loss_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
+    plt.legend()
+    plt.xlabel("Episode")
+    plt.ylabel("Avg. r_pkt_loss of last 10 Episodes")
+    plt.show()
 
-plt.figure(13)
-plt.plot(reward_converged, color=colors[0], linewidth=0.5, linestyle='--', marker='o')
-plt.xlabel("Traffic Load / Queue Length")
-plt.ylabel("Avg. Reward till Convergence")
-plt.show()
+    plt.figure(12)
+    plt.plot(ep_converged, color=colors[0], linewidth=0.5, linestyle='--', marker='o')
+    plt.xlabel("Traffic Load / Queue Length")
+    plt.ylabel("Number of Episode till Convergence")
+    plt.show()
 
-figure1, axes1 = plt.subplots()
-axes1.boxplot(np.array(ep_converged_list), labels=labels_1, sym="o", vert=True, patch_artist=True)  # labels_1 or labels_2
-axes1.set_xlabel('Traffic Load')
-axes1.set_ylabel('Number of Episode till Convergence')
-plt.show()
+    plt.figure(13)
+    plt.plot(reward_converged, color=colors[0], linewidth=0.5, linestyle='--', marker='o')
+    plt.xlabel("Traffic Load / Queue Length")
+    plt.ylabel("Avg. Reward till Convergence")
+    plt.show()
 
-figure2, axes2 = plt.subplots()
-axes2.boxplot(np.array(reward_converged_list), labels=labels_1, sym="o", vert=True, patch_artist=True)  # labels_1 or labels_2
-axes2.set_xlabel('Traffic Load')
-axes2.set_ylabel('Avg. Reward till Convergence')
-plt.show()
+    figure1, axes1 = plt.subplots()
+    axes1.boxplot(np.array(ep_converged_list), labels=labels_1, sym="o", vert=True, patch_artist=True)  # labels_1 or labels_2
+    axes1.set_xlabel('Traffic Load')
+    axes1.set_ylabel('Number of Episode till Convergence')
+    plt.show()
 
+    figure2, axes2 = plt.subplots()
+    axes2.boxplot(np.array(reward_converged_list), labels=labels_1, sym="o", vert=True, patch_artist=True)  # labels_1 or labels_2
+    axes2.set_xlabel('Traffic Load')
+    axes2.set_ylabel('Avg. Reward till Convergence')
+    plt.show()
+
+
+if __name__ == "__main__":
+    start = time.time()
+
+    main()
+
+    end = time.time()
+    runtime = end - start
+    print("runtime: ", runtime)
