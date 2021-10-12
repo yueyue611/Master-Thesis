@@ -1,9 +1,8 @@
 import math
 import time
-
+import random
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.stats import norm
 import pandas as pd
 
 import tensorflow as tf
@@ -11,6 +10,7 @@ from tensorflow.keras import layers
 
 from env import Env
 from config import Config
+from noise import OUNoise, GaussianNoise
 
 
 flows = Config.flows
@@ -25,33 +25,6 @@ print("Size of Action Space ->  {}".format(action_dim))
 
 upper_bound = Config.upper_bound
 lower_bound = Config.lower_bound
-
-
-# Ornstein-Uhlenbeck noise
-class OUNoise:
-    def __init__(self, processes, mean=0.5, sigma=0.3, theta=0.15, dt=0.1, x_initial=None):
-        self.processes = processes  # action_dim
-        self.mean = mean
-        self.sigma = sigma
-        self.theta = theta
-        self.dt = dt
-        self.x_initial = x_initial
-        self.x_prev = self.reset()
-
-    def __call__(self):
-        dw = norm.rvs(scale=self.dt, size=self.processes)
-        dx = self.theta * (self.mean - self.x_prev) * self.dt + self.sigma * dw
-        x = self.x_prev + dx
-        # store x into x_prev, make next noise dependent on current one
-        self.x_prev = x
-        return x
-
-    def reset(self):
-        if self.x_initial is not None:
-            self.x_prev = self.x_initial
-        else:
-            self.x_prev = np.ones(self.processes) * self.mean
-        return self.x_prev
 
 
 # replay buffer
@@ -73,8 +46,11 @@ class Buffer:
 
     # add (s,a,r,s') observation
     def record(self, state, action, reward, next_state):
-        # if buffer_capacity is exceeded, new experience will replace oldest ones
-        index = self.experience_counter % self.buffer_capacity
+        if self.experience_counter < self.buffer_capacity:
+            index = self.experience_counter
+        else:
+            # if buffer_capacity is exceeded, new experience will replace old ones randomly
+            index = random.randint(0, self.buffer_capacity - 1)
 
         self.state_buffer[index] = state
         self.action_buffer[index] = action
@@ -185,7 +161,7 @@ def policy(actor_model, state, noise, weights_original, indicator, exploration_r
     noise = noise()
     noise_dec = exploration_rate * noise
     # exploration: add decreased noise
-    if indicator == 1 and exploration_rate > 0 and np.random.randint(0, 1) < 0.8:
+    if indicator == 1 and exploration_rate > 0 and np.random.randint(0, 1) < 0.7:
         action_plus_n = sampled_actions + noise_dec
         # print("plus: ", action_plus_n)
         action_minus_n = sampled_actions - noise_dec
@@ -220,7 +196,13 @@ training
 
 
 def main():
-    ou_noise = OUNoise(action_dim)
+    start = time.time()
+
+    noise_mode = Config.noise
+    if noise_mode == "OU":
+        noise = OUNoise(action_dim)
+    elif noise_mode == "Gaussian":
+        noise = GaussianNoise(action_dim)
 
     # Learning rate for actor-critic models
     critic_lr = Config.critic_lr
@@ -267,172 +249,179 @@ def main():
     changed_flows_num = Config.changed_flows_num
     new_flows = env.new_flows(mode_flow_change, changed_flows_num)
 
-    # to store reward history of each episode
-    ep_reward_list = [[] for i in range(mode_select)]
-    ep_r_delay_list = [[] for i in range(mode_select)]
-    ep_r_pkt_loss_list = [[] for i in range(mode_select)]
-    ep_avg_delay_list = [[] for i in range(mode_select)]
+    experiment = Config.experiment
 
-    # random case
-    ep_reward_random_list = [[] for i in range(mode_select)]
-    ep_r_delay_random_list = [[] for i in range(mode_select)]
-    ep_r_pkt_loss_random_list = [[] for i in range(mode_select)]
-    ep_avg_delay_random_list = [[] for i in range(mode_select)]
+    for ex in range(9, experiment + 9):
+        # to store reward history of each episode
+        ep_reward_list = [[] for i in range(mode_select)]
+        ep_r_delay_list = [[] for i in range(mode_select)]
+        ep_r_pkt_loss_list = [[] for i in range(mode_select)]
+        ep_avg_delay_list = [[] for i in range(mode_select)]
 
-    # to store average reward history of last few episodes
-    avg_reward_list = [[] for j in range(mode_select)]
-    avg_r_delay_list = [[] for j in range(mode_select)]
-    avg_r_pkt_loss_list = [[] for j in range(mode_select)]
-    avg_avg_delay_list = [[] for j in range(mode_select)]
+        # random case
+        ep_reward_random_list = [[] for i in range(mode_select)]
+        ep_r_delay_random_list = [[] for i in range(mode_select)]
+        ep_r_pkt_loss_random_list = [[] for i in range(mode_select)]
+        ep_avg_delay_random_list = [[] for i in range(mode_select)]
 
-    opt_path_list = [[] for k in range(mode_select)]
+        # to store average reward history of last few episodes
+        avg_reward_list = [[] for j in range(mode_select)]
+        avg_r_delay_list = [[] for j in range(mode_select)]
+        avg_r_pkt_loss_list = [[] for j in range(mode_select)]
+        avg_avg_delay_list = [[] for j in range(mode_select)]
 
-    ep_converged = [0 for k in range(mode_select)]
-    reward_converged = [0 for k in range(mode_select)]
+        opt_path_list = [[] for k in range(mode_select)]
 
-    for ft in range(mode_select):
-        actor_model = ActorNetwork().create_actor_network()
-        critic_model = CriticNetwork().create_critic_network()
-        target_actor_model = ActorNetwork().create_actor_network()
-        target_critic_model = CriticNetwork().create_critic_network()
+        ep_converged = [0 for k in range(mode_select)]
+        reward_converged = [0 for k in range(mode_select)]
 
-        # make the weights equal initially
-        target_actor_model.set_weights(actor_model.get_weights())
-        target_critic_model.set_weights(critic_model.get_weights())
+        for ft in range(mode_select):
+            actor_model = ActorNetwork().create_actor_network()
+            critic_model = CriticNetwork().create_critic_network()
+            target_actor_model = ActorNetwork().create_actor_network()
+            target_critic_model = CriticNetwork().create_critic_network()
 
-        # create buffer
-        buffer = Buffer(1000, 64)
+            # make the weights equal initially
+            target_actor_model.set_weights(actor_model.get_weights())
+            target_critic_model.set_weights(critic_model.get_weights())
 
-        # initialization
-        env.update_flows("NONE", new_flows, flows_original)
-        flows_tl = env.get_flow_tl(traffic_load)
-        flow_traffic, queue_length_select = mode_selection(mode_select, len_traffic_load, queue_length, flows_tl, ft)
-        prev_state = env.reset(weights_original, flow_traffic)
-        print("Initialization",
-              "\nflows_tl: ", flows_tl,
-              "\nflow_traffic: ", flow_traffic,
-              "\nprev_state", prev_state)
+            # create buffer
+            buffer = Buffer(1000, 64)
 
-        exploration_rate = 1.0
+            # initialization
+            env.update_flows("NONE", new_flows, flows_original)
+            flows_tl = env.get_flow_tl(traffic_load)
+            flow_traffic, queue_length_select = mode_selection(mode_select, len_traffic_load, queue_length, flows_tl, ft)
+            prev_state = env.reset(weights_original, flow_traffic)
+            print("Initialization",
+                  "\nflows_tl: ", flows_tl,
+                  "\nflow_traffic: ", flow_traffic,
+                  "\nprev_state", prev_state)
 
-        for ep in range(total_episodes):
-            print("case {}: episode {} begins!".format(ft, ep))
+            exploration_rate = 1.0
 
-            episodic_reward = 0
-            episodic_r_delay = 0
-            episodic_avg_delay = 0
-            episodic_r_pkt_loss = 0
+            for ep in range(total_episodes):
+                print("case {}: episode {} begins!".format(ft, ep))
 
-            episodic_reward_random = 0
-            episodic_r_delay_random = 0
-            episodic_avg_delay_random = 0
-            episodic_r_pkt_loss_random = 0
+                episodic_reward = 0
+                episodic_r_delay = 0
+                episodic_avg_delay = 0
+                episodic_r_pkt_loss = 0
 
-            # joining or leaving flows after Nth episode:
-            if ep == N:
-                if mode_flow_change != "NONE":
-                    env.update_flows(mode_flow_change, new_flows, flows_original)
-                    flows_tl = env.get_flow_tl(traffic_load)
-                    flow_traffic, queue_length_select = mode_selection(mode_select, len_traffic_load, queue_length,
-                                                                       flows_tl, ft)
-                    # use action from last episode
-                    action = np.array(action).reshape((nodes, nodes))
-                    prev_state = env.reset(action, flow_traffic)
-                    # update all paths
-                    all_paths = env.get_all_paths()
+                episodic_reward_random = 0
+                episodic_r_delay_random = 0
+                episodic_avg_delay_random = 0
+                episodic_r_pkt_loss_random = 0
 
-            for step in range(total_steps):
-                tf_prev_state = tf.convert_to_tensor(prev_state.reshape(1, nodes ** 2))
+                # joining or leaving flows after Nth episode:
+                if ep == N:
+                    if mode_flow_change != "NONE":
+                        env.update_flows(mode_flow_change, new_flows, flows_original)
+                        flows_tl = env.get_flow_tl(traffic_load)
+                        flow_traffic, queue_length_select = mode_selection(mode_select, len_traffic_load, queue_length,
+                                                                           flows_tl, ft)
+                        # use action from last episode
+                        action = np.array(action).reshape((nodes, nodes))
+                        prev_state = env.reset(action, flow_traffic)
+                        # update all paths
+                        all_paths = env.get_all_paths()
 
-                # update exploration rate
-                exploration_rate -= 1.0 / (total_episodes * total_steps)
+                for step in range(total_steps):
+                    tf_prev_state = tf.convert_to_tensor(prev_state.reshape(1, nodes ** 2))
 
-                # shape: (nodes ** 2 * 2, )
-                # 1 for training
-                action = policy(actor_model, tf_prev_state, ou_noise, weights_original, 1, exploration_rate)
+                    # update exploration rate
+                    exploration_rate -= 1.0 / (total_episodes * total_steps)
 
-                # receive state and reward from environment
-                state, reward, r_delay, avg_delay, r_pkt_loss = env.step(action, flow_traffic, queue_length_select,
-                                                                         a_delay, a_pkt_loss)
+                    # shape: (nodes ** 2 * 2, )
+                    # 1 for training
+                    action = policy(actor_model, tf_prev_state, noise, weights_original, 1, exploration_rate)
 
-                # add replay buffer
-                buffer.record(prev_state.reshape(1, nodes ** 2), action, reward, state.reshape(1, nodes ** 2))
-                episodic_reward += reward
-                episodic_r_delay += - r_delay
-                episodic_avg_delay += avg_delay
-                episodic_r_pkt_loss += - r_pkt_loss
+                    # receive state and reward from environment
+                    state, reward, r_delay, avg_delay, r_pkt_loss = env.step(action, flow_traffic, queue_length_select,
+                                                                             a_delay, a_pkt_loss)
 
-                buffer.learn(actor_model, critic_model, target_actor_model, target_critic_model, actor_optimizer,
-                             critic_optimizer, gamma)
-                update_target_weights(target_actor_model.variables, actor_model.variables, tau)
-                update_target_weights(target_critic_model.variables, critic_model.variables, tau)
+                    # add replay buffer
+                    buffer.record(prev_state.reshape(1, nodes ** 2), action, reward, state.reshape(1, nodes ** 2))
+                    episodic_reward += reward
+                    episodic_r_delay += - r_delay
+                    episodic_avg_delay += avg_delay
+                    episodic_r_pkt_loss += - r_pkt_loss
 
-                # update state
-                prev_state = state
+                    buffer.learn(actor_model, critic_model, target_actor_model, target_critic_model, actor_optimizer,
+                                 critic_optimizer, gamma)
+                    update_target_weights(target_actor_model.variables, actor_model.variables, tau)
+                    update_target_weights(target_critic_model.variables, critic_model.variables, tau)
 
-                # random selection
-                paths_random = [all_paths[i][np.random.randint(0, len(all_paths[i]))] for i in range(0, flows)]
-                state_random = env.get_state(paths_random, flow_traffic)
-                reward_random, r_delay_random, avg_delay_random, r_pkt_loss_random = env.get_reward(
-                    state_random, paths_random, queue_length_select, a_delay, a_pkt_loss)
-                episodic_reward_random += reward_random
-                episodic_r_delay_random += - r_delay_random
-                episodic_avg_delay_random += avg_delay_random
-                episodic_r_pkt_loss_random += - r_pkt_loss_random
+                    # update state
+                    prev_state = state
 
-            # mean reward of each episode
-            ep_reward_list[ft].append(episodic_reward / total_steps)
-            ep_r_delay_list[ft].append(episodic_r_delay / total_steps)
-            ep_avg_delay_list[ft].append(episodic_avg_delay / total_steps)
-            ep_r_pkt_loss_list[ft].append(episodic_r_pkt_loss / total_steps)
+                    # random selection
+                    paths_random = [all_paths[i][np.random.randint(0, len(all_paths[i]))] for i in range(0, flows)]
+                    state_random = env.get_state(paths_random, flow_traffic)
+                    reward_random, r_delay_random, avg_delay_random, r_pkt_loss_random = env.get_reward(
+                        state_random, paths_random, queue_length_select, a_delay, a_pkt_loss)
+                    episodic_reward_random += reward_random
+                    episodic_r_delay_random += - r_delay_random
+                    episodic_avg_delay_random += avg_delay_random
+                    episodic_r_pkt_loss_random += - r_pkt_loss_random
 
-            # random case
-            ep_reward_random_list[ft].append(episodic_reward_random / total_steps)
-            ep_r_delay_random_list[ft].append(episodic_r_delay_random / total_steps)
-            ep_avg_delay_random_list[ft].append(episodic_avg_delay_random / total_steps)
-            ep_r_pkt_loss_random_list[ft].append(episodic_r_pkt_loss_random / total_steps)
+                # mean reward of each episode
+                ep_reward_list[ft].append(episodic_reward / total_steps)
+                ep_r_delay_list[ft].append(episodic_r_delay / total_steps)
+                ep_avg_delay_list[ft].append(episodic_avg_delay / total_steps)
+                ep_r_pkt_loss_list[ft].append(episodic_r_pkt_loss / total_steps)
 
-            # mean reward of last 10 episodes
-            avg_reward = np.mean(ep_reward_list[ft][-10:])
-            avg_reward_list[ft].append(avg_reward)
+                # random case
+                ep_reward_random_list[ft].append(episodic_reward_random / total_steps)
+                ep_r_delay_random_list[ft].append(episodic_r_delay_random / total_steps)
+                ep_avg_delay_random_list[ft].append(episodic_avg_delay_random / total_steps)
+                ep_r_pkt_loss_random_list[ft].append(episodic_r_pkt_loss_random / total_steps)
 
-            avg_r_delay = np.mean(ep_r_delay_list[ft][-10:])
-            avg_r_delay_list[ft].append(avg_r_delay)
+                # mean reward of last 10 episodes
+                avg_reward = np.mean(ep_reward_list[ft][-10:])
+                avg_reward_list[ft].append(avg_reward)
 
-            avg_avg_delay = np.mean(ep_avg_delay_list[ft][-10:])
-            avg_avg_delay_list[ft].append(avg_avg_delay)
+                avg_r_delay = np.mean(ep_r_delay_list[ft][-10:])
+                avg_r_delay_list[ft].append(avg_r_delay)
 
-            avg_r_pkt_loss = np.mean(ep_r_pkt_loss_list[ft][-10:])
-            avg_r_pkt_loss_list[ft].append(avg_r_pkt_loss)
+                avg_avg_delay = np.mean(ep_avg_delay_list[ft][-10:])
+                avg_avg_delay_list[ft].append(avg_avg_delay)
 
-            # to see whether the total reward has converged, sliding window size = 10
-            cost = 0
-            for i in range(0, min(10, ep + 1)):
-                cost += (ep_reward_list[ft][-1 - i] - avg_reward) ** 2
-            RMSD = math.sqrt(cost / min(10, ep + 1))
-            # print("RMSD: ", RMSD)
-            if RMSD < 0.001 and ep_converged[ft] == 0 and ep >= 10:
-                ep_converged[ft] = ep + 1
-                reward_converged[ft] = ep_reward_list[ft][-1]
+                avg_r_pkt_loss = np.mean(ep_r_pkt_loss_list[ft][-10:])
+                avg_r_pkt_loss_list[ft].append(avg_r_pkt_loss)
 
-        # test
-        tf_prev_state_test = tf.convert_to_tensor(prev_state.reshape(1, nodes ** 2))
-        action_test = policy(actor_model, tf_prev_state_test, ou_noise, weights_original, 0)  # 0 for test
-        opt_path_list[ft].append(env.get_opt_path_advance(np.array(action_test).reshape((nodes * 2, nodes)),
-                                                          flow_traffic))
-    print("opt_path_list", opt_path_list)
+                # to see whether the total reward has converged, sliding window size = 10
+                cost = 0
+                for i in range(0, min(10, ep + 1)):
+                    cost += (ep_reward_list[ft][-1 - i] - avg_reward) ** 2
+                RMSD = math.sqrt(cost / min(10, ep + 1))
+                # print("RMSD: ", RMSD)
+                if RMSD < 0.001 and ep_converged[ft] == 0 and ep >= 10:
+                    ep_converged[ft] = ep + 1
+                    reward_converged[ft] = ep_reward_list[ft][-1]
 
-    # create csv
-    # No.{x}
-    x = 1
-    df = pd.DataFrame(ep_reward_list)
-    df.to_csv("/home/tud/Github/Master-Thesis/simulation8.0/csv/No.{}, {}, {}, {}, {}.csv"
-              .format(x, total_episodes, total_steps, mode, mode_flow_change), header=False, index=False)
+            # test
+            tf_prev_state_test = tf.convert_to_tensor(prev_state.reshape(1, nodes ** 2))
+            action_test = policy(actor_model, tf_prev_state_test, noise, weights_original, 0)  # 0 for test
+            opt_path_list[ft].append(env.get_opt_path_advance(np.array(action_test).reshape((nodes * 2, nodes)),
+                                                              flow_traffic))
+        print("opt_path_list", opt_path_list)
 
-    df = pd.DataFrame(reward_converged)
-    df.to_csv("/home/tud/Github/Master-Thesis/simulation8.0/csv/CR: No.{}, {}, {}, {}, {}.csv"
-              .format(x, total_episodes, total_steps, mode, mode_flow_change),header=False, index=False)
+        # create csv
+        # No.{ex}
+        df = pd.DataFrame(ep_reward_list)
+        df.to_csv("/home/tud/Github/Master-Thesis/simulation8.0/csv/{}/No.{}, {}, {}, {}, {}, {}.csv"
+                  .format(noise_mode, ex, total_episodes, total_steps, noise_mode, mode, mode_flow_change),
+                  header=False, index=False)
 
+        df = pd.DataFrame(reward_converged)
+        df.to_csv("/home/tud/Github/Master-Thesis/simulation8.0/csv/{}/CR: No.{}, {}, {}, {}, {}, {}.csv"
+                  .format(noise_mode, ex, total_episodes, total_steps, noise_mode, mode, mode_flow_change),
+                  header=False, index=False)
+
+        end = time.time()
+        runtime = end - start
+        print("runtime: ", runtime)
 
     # plot graph
     # episodes versus Avg. Rewards
@@ -451,7 +440,7 @@ def main():
 
     plt.figure(1)
     for i in range(mode_select):
-        plt.plot(ep_reward_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
+        plt.plot(ep_reward_list[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
     plt.legend()
     plt.xlabel("Episode")
     plt.ylabel("Avg. Episodic Reward")
@@ -460,7 +449,7 @@ def main():
 
     plt.figure(2)
     for i in range(mode_select):
-        plt.plot(ep_r_delay_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
+        plt.plot(ep_r_delay_list[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
     plt.legend()
     plt.xlabel("Episode")
     plt.ylabel("Avg. Episodic r_delay")
@@ -469,7 +458,7 @@ def main():
 
     plt.figure(3)
     for i in range(mode_select):
-        plt.plot(ep_avg_delay_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
+        plt.plot(ep_avg_delay_list[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
     plt.legend()
     plt.xlabel("Episode")
     plt.ylabel("Avg. Episodic avg_delay")
@@ -477,9 +466,9 @@ def main():
     plt.show()
 
     plt.figure(4)
-    for i in range(3, 4):
-        plt.plot(ep_reward_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
-        plt.plot(ep_reward_random_list[i], color=colors2[i], linewidth=0.5, linestyle='-', marker='^', markersize=2, label=labelsR[i])
+    for i in range(2, 3):
+        plt.plot(ep_reward_list[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
+        plt.plot(ep_reward_random_list[i], linewidth=0.5, linestyle='-', marker='^', markersize=2, label=labelsR[i])
     plt.legend()
     plt.xlabel("Episode")
     plt.ylabel("Avg. Episodic Reward")
@@ -487,9 +476,9 @@ def main():
     plt.show()
 
     plt.figure(5)
-    for i in range(3, 4):
-        plt.plot(ep_r_delay_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
-        plt.plot(ep_r_delay_random_list[i], color=colors2[i], linewidth=0.5, linestyle='-', marker='^', markersize=2, label=labelsR[i])
+    for i in range(2, 3):
+        plt.plot(ep_r_delay_list[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
+        plt.plot(ep_r_delay_random_list[i], linewidth=0.5, linestyle='-', marker='^', markersize=2, label=labelsR[i])
     plt.legend()
     plt.xlabel("Episode")
     plt.ylabel("Avg. Episodic r_delay")
@@ -497,9 +486,9 @@ def main():
     plt.show()
 
     plt.figure(6)
-    for i in range(3, 4):
-        plt.plot(ep_avg_delay_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
-        plt.plot(ep_avg_delay_random_list[i], color=colors2[i], linewidth=0.5, linestyle='-', marker='^', markersize=2, label=labelsR[i])
+    for i in range(2, 3):
+        plt.plot(ep_avg_delay_list[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
+        plt.plot(ep_avg_delay_random_list[i], linewidth=0.5, linestyle='-', marker='^', markersize=2, label=labelsR[i])
     plt.legend()
     plt.xlabel("Episode")
     plt.ylabel("Avg. Episodic avg_delay")
@@ -508,75 +497,13 @@ def main():
 
     plt.figure(7)
     for i in range(mode_select):
-        plt.plot(ep_r_pkt_loss_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
+        plt.plot(ep_r_pkt_loss_list[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
     plt.legend()
     plt.xlabel("Episode")
     plt.ylabel("Avg. Episodic r_pkt_loss")
     # plt.savefig('Avg. Episodic r_pkt_loss.png', dpi=300, bbox_inches='tight')
     plt.show()
 
-    plt.figure(8)
-    for i in range(mode_select):
-        plt.plot(avg_reward_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
-    plt.legend()
-    plt.xlabel("Episode")
-    plt.ylabel("Avg. Reward of Last 10 Episodes")
-    plt.show()
-
-    plt.figure(9)
-    for i in range(mode_select):
-        plt.plot(avg_r_delay_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
-    plt.legend()
-    plt.xlabel("Episode")
-    plt.ylabel("Avg. r_delay of Last 10 Episodes")
-    plt.show()
-
-    plt.figure(10)
-    for i in range(mode_select):
-        plt.plot(avg_avg_delay_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
-    plt.legend()
-    plt.xlabel("Episode")
-    plt.ylabel("Avg. avg_delay of Last 10 Episodes")
-    plt.show()
-
-    plt.figure(11)
-    for i in range(mode_select):
-        plt.plot(avg_r_pkt_loss_list[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
-    plt.legend()
-    plt.xlabel("Episode")
-    plt.ylabel("Avg. r_pkt_loss of last 10 Episodes")
-    plt.show()
-
-    plt.figure(12)
-    plt.plot(ep_converged, color=colors[0], linewidth=0.5, linestyle='--', marker='o')
-    plt.xlabel("Traffic Load / Queue Length")
-    plt.ylabel("Number of Episode till Convergence")
-    plt.show()
-
-    plt.figure(13)
-    plt.plot(reward_converged, color=colors[0], linewidth=0.5, linestyle='--', marker='o')
-    plt.xlabel("Traffic Load / Queue Length")
-    plt.ylabel("Avg. Reward till Convergence")
-    plt.show()
-
-    figure1, axes1 = plt.subplots()
-    axes1.boxplot(np.array(ep_converged_list), labels=labels_1, sym="o", vert=True, patch_artist=True)  # labels_1 or labels_2
-    axes1.set_xlabel('Traffic Load')
-    axes1.set_ylabel('Number of Episode till Convergence')
-    plt.show()
-
-    figure2, axes2 = plt.subplots()
-    axes2.boxplot(np.array(reward_converged_list), labels=labels_1, sym="o", vert=True, patch_artist=True)  # labels_1 or labels_2
-    axes2.set_xlabel('Traffic Load')
-    axes2.set_ylabel('Avg. Reward till Convergence')
-    plt.show()
-
 
 if __name__ == "__main__":
-    start = time.time()
-
     main()
-
-    end = time.time()
-    runtime = end - start
-    print("runtime: ", runtime)

@@ -15,6 +15,10 @@ class Config:
     upper_bound = 1
     lower_bound = 0
 
+    # noise type
+    noise = "OU"
+    # noise = "Gaussian"
+
     # Learning rate for actor-critic models
     critic_lr = 0.002
     actor_lr = 0.001
@@ -29,7 +33,7 @@ class Config:
     a_pkt_loss = 1000
 
     # number of episodes, steps
-    total_episodes = 100
+    total_episodes = 300
     total_steps = 100
 
     # traffic load
@@ -49,4 +53,7 @@ class Config:
     N = 50
     mode_flow_change = "NONE"  # "JOIN" or "LEAVE" or "NONE"
     changed_flows_num = 2
+
+    # number of experiments
+    experiment = 10
 

@@ -221,7 +221,7 @@ class Env:
                     all_paths_onepair[k].append([distance, bandwidth])
                 # all possible paths are sorted according to the aggregated weights
                 all_paths_onepair.sort(key=lambda x: (x[-1][0]))
-                #print("all_paths_onepair_sort:", all_paths_onepair)
+                # print("all_paths_onepair_sort:", all_paths_onepair)
                 path_id = 0
                 start = 0
                 opt_path.append(all_paths_onepair[path_id][:-1])  # [:-1]: exclude the last item distance
@@ -233,7 +233,7 @@ class Env:
                         path_id = (path_id + 1) % len(all_paths_onepair)
                         opt_path.append(all_paths_onepair[path_id][:-1])
                         start = end
-        #print("path: ", opt_path)
+        # print("path: ", opt_path)
         return opt_path
 
     # get state

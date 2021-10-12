@@ -1,6 +1,8 @@
 import csv
 import matplotlib.pyplot as plt
 import numpy as np
+import scipy.stats as st
+
 from config import Config
 
 
@@ -14,34 +16,44 @@ def conv(s):
 
 
 def main():
-    experiment_num = 2
-
+    experiment = Config.experiment
     total_episodes = Config.total_episodes
     total_steps = Config.total_steps
+    noise_mode = Config.noise
     mode = Config.mode
     mode_select = Config.mode_select
     mode_flow_change = Config.mode_flow_change
 
-    reward = []
+    reward = [[] for _ in range(0, experiment)]
+    converged_reward = [[] for _ in range(0, experiment)]
 
-    with open(
-            "/home/tud/Github/Master-Thesis/simulation8.0/csv/No.{}, {}, {}, {}, {}.csv".format(
-                1, total_episodes, total_steps, mode, mode_flow_change), 'r') as data_reward:
-        reader_reward = list(csv.reader(data_reward))
-        for i in range(len(reader_reward)):
-            reward.append([conv(s) for s in reader_reward[i]])
-
-    converged_reward = [[] for _ in range(0, experiment_num)]
-    for i in range(1, experiment_num + 1):
+    for i in range(1, experiment + 1):
         with open(
-                "/home/tud/Github/Master-Thesis/simulation8.0/csv/CR: No.{}, {}, {}, {}, {}.csv".format(
-                    i, total_episodes, total_steps, mode, mode_flow_change), 'r') as data_cr:
+                "/home/tud/Github/Master-Thesis/simulation8.0/csv/{}/No.{}, {}, {}, {}, {}, {}.csv".format(
+                    noise_mode, i, total_episodes, total_steps, noise_mode, mode, mode_flow_change), 'r') as data_reward:
+            reader_reward = list(csv.reader(data_reward))
+            for j in range(len(reader_reward)):
+                reward[i - 1].append([conv(s) for s in reader_reward[j]])
+
+        with open(
+                "/home/tud/Github/Master-Thesis/simulation8.0/csv/{}/CR: No.{}, {}, {}, {}, {}, {}.csv".format(
+                    noise_mode, i, total_episodes, total_steps, noise_mode, mode, mode_flow_change), 'r') as data_cr:
             reader_cr = list(csv.reader(data_cr))
-            print(reader_cr)
             for j in range(len(reader_cr)):
                 converged_reward[i - 1].append(conv(reader_cr[j][0]))
 
-    print(converged_reward)
+    # calculate confidence interval for reward
+    data_reward = np.array(reward).transpose((1, 0, 2))
+    expect_reward = [[] for _ in range(0, mode_select)]
+    low_bound_reward = [0 for _ in range(0, mode_select)]
+    high_bound_reward = [0 for _ in range(0, mode_select)]
+    for i in range(0, mode_select):
+        expect_reward[i].append(np.mean(data_reward[i], 0))
+        low_bound_reward[i], high_bound_reward[i] = st.t.interval(
+            0.95, len(data_reward[i]) - 1, loc=np.mean(data_reward[i], 0), scale=st.sem(data_reward[i]))
+
+    print(expect_reward[0])
+    print(low_bound_reward[0])
 
     colors = ['r', 'y', 'g', 'c', 'b', 'm', 'gray', 'orange', 'purple', 'pink']
     colors2 = ['gray', 'orange', 'purple', 'pink', 'r', 'y', 'g', 'c', 'b', 'm']
@@ -58,8 +70,10 @@ def main():
         labelsr = labels_2r
 
     plt.figure(1)
+    x = np.linspace(0, total_episodes - 1, num=total_episodes)
     for i in range(mode_select):
-        plt.plot(reward[i], color=colors[i], linewidth=0.5, linestyle='--', marker='o', markersize=2, label=labels[i])
+        plt.plot(x, expect_reward[i][0], linewidth=0.5, linestyle='-', markersize=2, label=labels[i])
+        plt.fill_between(x, low_bound_reward[i], high_bound_reward[i], alpha=0.5)
     plt.legend()
     plt.xlabel("Episode")
     plt.ylabel("Avg. Episodic Reward")
@@ -67,9 +81,9 @@ def main():
     plt.show()
 
     figure1, axes1 = plt.subplots()
-    axes1.boxplot(np.array(converged_reward), labels=labels_1, sym="o", vert=True, patch_artist=True)  # labels_1 or labels_2
-    axes1.set_xlabel('Traffic Load')
-    axes1.set_ylabel('Avg. Reward till Convergence')
+    axes1.boxplot(np.array(converged_reward), labels=labels, sym="o", vert=True, patch_artist=True)
+    axes1.set_ylabel('Avg. Reward after Convergence')
+    # plt.savefig('Avg. Reward after Convergence.png', dpi=300, bbox_inches='tight')
     plt.show()
 
 
