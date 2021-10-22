@@ -227,7 +227,7 @@ class Env:
                 opt_path.append(all_paths_onepair[path_id][:-1])  # [:-1]: exclude the last item distance
                 for end in range(1, len(flows_group[j][2])):
                     if sum(flows_group[j][2][start:end+1]) <= \
-                            self.max_bandwidth * all_paths_onepair[path_id][-1][1] * self.total_flows:
+                            max(self.max_bandwidth * all_paths_onepair[path_id][-1][1] * self.total_flows, self.max_bandwidth):  # !!!
                         opt_path.append(all_paths_onepair[path_id][:-1])
                     else:
                         path_id = (path_id + 1) % len(all_paths_onepair)

@@ -13,7 +13,7 @@ class Config:
 
     # action boundary
     upper_bound = 1
-    lower_bound = 0
+    lower_bound = 0.01
 
     # noise type
     noise = "OU"
@@ -30,7 +30,7 @@ class Config:
 
     # weights for determining reward
     a_delay = 1.0
-    a_pkt_loss = 1000
+    a_pkt_loss = 100
 
     # number of episodes, steps
     total_episodes = 300
@@ -38,6 +38,7 @@ class Config:
 
     # traffic load
     traffic_load = [0.2, 0.3, 0.5, 0.7, 1.0, 1.2]
+    # traffic_load = [0.7, 1.0, 1.2]
 
     # queue length
     queue_length = [1, 2, 3]
@@ -55,5 +56,4 @@ class Config:
     changed_flows_num = 2
 
     # number of experiments
-    experiment = 10
-
+    experiment = 14

@@ -1,0 +1,131 @@
+TL:
+index1 = 0  # queue_length = 1
+
+#A
+"""
+if self.experience_counter < self.buffer_capacity:
+    index = self.experience_counter
+else:
+    # if buffer_capacity is exceeded, new experience will replace old ones randomly
+    index = random.randint(0, self.buffer_capacity - 1)
+"""
+
+new: 
+max(self.max_bandwidth * all_paths_onepair[path_id][-1][1] * self.total_flows, self.max_bandwidth): 
+if indicator == 1 and exploration_rate > 0 and np.random.randint(0, 1) < 0.7:
+mean = 0.5
+
+tryout: 
+max(self.max_bandwidth * all_paths_onepair[path_id][-1][1] * self.total_flows, self.max_bandwidth):
+if indicator == 1 and exploration_rate > 0:
+mean = 0.5
+
+noise:
+max(self.max_bandwidth * all_paths_onepair[path_id][-1][1] * self.total_flows, self.max_bandwidth):
+if indicator == 1 and exploration_rate > 0:
+mean = 0
+
+(ou)400: mean = 0   self.x_prev = np.zeros(self.processes) * self.mean
+(ou)500: mean = 0.5   self.x_prev = np.zeros(self.processes) * self.mean
+
+
+
+#B
+# if buffer_capacity is exceeded, new experience will replace the oldest one
+index = self.experience_counter % self.buffer_capacity
+
+max(self.max_bandwidth * all_paths_onepair[path_id][-1][1] * self.total_flows, self.max_bandwidth):
+if indicator == 1 and exploration_rate > 0:
+
+index:
+200: mean = 0.5
+300: mean = 0
+(ou) 400: mean = 0    self.x_prev = np.zeros(self.processes) * self.mean
+(ou) 500: mean = 0.5    self.x_prev = np.zeros(self.processes) * self.mean
+
+
+conclusion:
+index: noise400_ou better than index400_ou in regrad to TL1.0 1.2
+	noise500_ou index500_ou no change
+	  
+no change: self.x_prev = np.zeros(self.processes) * self.mean
+mean = 0 converg more quickly than mean = 0.5
+
+
+
+QL:
+
+tem:
+#A
+if indicator == 1 and exploration_rate > 0:
+mean = 0 
+self.x_prev = np.ones(self.processes) * self.mean
+
+1: index2 = 4  # traffic load = 1.0  (QL 2 better 3 better 1)
+
+100: index2 = 2  # traffic load = 0.5  (same)
+
+200: index2 = 5  # traffic load = 1.2  (QL 2 better 3 better 1)
+
+300: index2 = 3  # traffic load = 0.7  (QL 2 better 3 better 1)
+
+
+
+So........for TL
+
+best:
+#A
+if indicator == 1 and exploration_rate > 0:
+mean = 0 
+self.x_prev = np.ones(self.processes) * self.mean
+
+index1 = 1  # queue_length = 2
+
+1: if indicator == 1 and exploration_rate > 0:
+
+100: if indicator == 1 and exploration_rate > 0 and np.random.randint(0, 1) < 0.7:
+
+
+
+tanh:
+# action boundary
+upper_bound = 1
+lower_bound = 0.01
+
+# make sure action is within bounds, set 0 to link weights in action when there is no link
+clip_actions = np.clip(sampled_actions, lower_bound, upper_bound)
+legal_actions = np.where((weights == 1), clip_actions, 0)
+
+exploration_rate -= 1.0 / (total_episodes * total_steps * 0.8) 
+
+#A
+if indicator == 1 and exploration_rate > 0:
+mean = 0 
+self.x_prev = np.ones(self.processes) * self.mean
+
+TL:
+100: index1 = 0  # queue_length = 1 TL=[0.7, 1.0, 1.2]
+110: index1 = 0  # queue_length = 1 
+
+200: index1 = 1  # queue_length = 2
+
+300: index1 = 0  # queue_length = 1     a_pkt_loss = 500
+
+400: index1 = 1  # queue_length = 2     a_pkt_loss = 500
+
+500: index1 = 2  # queue_length = 3
+
+QL:
+1: 100: index2 = 4  # traffic load = 1
+
+
+
+
+
+
+
+
+
+
+
+

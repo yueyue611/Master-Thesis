@@ -1,10 +1,11 @@
 import numpy as np
 from scipy.stats import norm
+import copy
 
 
 # Ornstein-Uhlenbeck noise
 class OUNoise:
-    def __init__(self, processes, mean=0.5, sigma=0.3, theta=0.15, dt=0.1, x_initial=None):
+    def __init__(self, processes, mean=0, sigma=0.5, theta=0.15, dt=0.1, x_initial=None):
         self.processes = processes  # action_dim
         self.mean = mean
         self.sigma = sigma
@@ -30,7 +31,7 @@ class OUNoise:
 
 
 class GaussianNoise:
-    def __init__(self, processes, mean=0.5, sigma=0.3):
+    def __init__(self, processes, mean=0, sigma=0.3):
         self.processes = processes  # action_dim
         self.mean = mean
         self.sigma = sigma

@@ -46,6 +46,10 @@ class Buffer:
 
     # add (s,a,r,s') observation
     def record(self, state, action, reward, next_state):
+        """
+        # if buffer_capacity is exceeded, new experience will replace the oldest one
+        index = self.experience_counter % self.buffer_capacity
+        """
         if self.experience_counter < self.buffer_capacity:
             index = self.experience_counter
         else:
@@ -118,6 +122,7 @@ class ActorNetwork:
         self.HIDDEN2_UNITS = 32
         self.h_activation = "relu"
         self.activation = "sigmoid"
+        # self.activation = "tanh"
 
     # create actor network
     def create_actor_network(self):
@@ -136,7 +141,6 @@ class CriticNetwork:
         self.HIDDEN1_UNITS = 16
         self.HIDDEN2_UNITS = 32
         self.h_activation = "relu"
-        self.activation = "sigmoid"
 
     # create critic network
     def create_critic_network(self):
@@ -158,10 +162,13 @@ class CriticNetwork:
 def policy(actor_model, state, noise, weights_original, indicator, exploration_rate=1.0):
     weights = np.array(weights_original+weights_original).reshape(1, nodes ** 2 * 2)
     sampled_actions = actor_model(state)
+    # print("sampled actions: ", sampled_actions)
     noise = noise()
+    # print("noise: ", noise)
     noise_dec = exploration_rate * noise
     # exploration: add decreased noise
-    if indicator == 1 and exploration_rate > 0 and np.random.randint(0, 1) < 0.7:
+    # if indicator == 1 and exploration_rate > 0 and np.random.randint(0, 1) < 0.7:
+    if indicator == 1 and exploration_rate > 0:  # !!!
         action_plus_n = sampled_actions + noise_dec
         # print("plus: ", action_plus_n)
         action_minus_n = sampled_actions - noise_dec
@@ -172,7 +179,8 @@ def policy(actor_model, state, noise, weights_original, indicator, exploration_r
     else:
         sampled_actions = sampled_actions.numpy()
     # make sure action is within bounds, set 0 to link weights in action when there is no link
-    legal_actions = np.where((weights == 1), sampled_actions, 0).clip(lower_bound, upper_bound)
+    clip_actions = np.clip(sampled_actions, lower_bound, upper_bound)
+    legal_actions = np.where((weights == 1), clip_actions, 0)
     action = np.squeeze(legal_actions)
     # print("legal actions: ", legal_actions)
     return action
@@ -180,11 +188,11 @@ def policy(actor_model, state, noise, weights_original, indicator, exploration_r
 
 def mode_selection(mode_select, len_traffic_load, queue_length, flows_tl, ft):
     if mode_select == len_traffic_load:
-        index1 = 0  # queue_length = 1
+        index1 = 2  # queue_length = 3
         queue_length_select = queue_length[index1]
         flow_traffic = [flows_tl[ft][i][2] for i in range(len(flows_tl[ft]))]
     else:
-        index2 = -2  # traffic load = 1.0
+        index2 = 4  # traffic load = 1
         flow_traffic = [flows_tl[index2][i][2] for i in range(len(flows_tl[index2]))]
         queue_length_select = queue_length[ft]
     return flow_traffic, queue_length_select
@@ -251,7 +259,7 @@ def main():
 
     experiment = Config.experiment
 
-    for ex in range(9, experiment + 9):
+    for ex in range(502, experiment + 502):
         # to store reward history of each episode
         ep_reward_list = [[] for i in range(mode_select)]
         ep_r_delay_list = [[] for i in range(mode_select)]
@@ -330,7 +338,7 @@ def main():
                     tf_prev_state = tf.convert_to_tensor(prev_state.reshape(1, nodes ** 2))
 
                     # update exploration rate
-                    exploration_rate -= 1.0 / (total_episodes * total_steps)
+                    exploration_rate -= 1.0 / (total_episodes * total_steps * 0.8)  # !!!!!
 
                     # shape: (nodes ** 2 * 2, )
                     # 1 for training
@@ -410,12 +418,12 @@ def main():
         # create csv
         # No.{ex}
         df = pd.DataFrame(ep_reward_list)
-        df.to_csv("/home/tud/Github/Master-Thesis/simulation8.0/csv/{}/No.{}, {}, {}, {}, {}, {}.csv"
+        df.to_csv("/home/tud/Github/Master-Thesis/simulation8.0/csv/tanh/{}/No.{}, {}, {}, {}, {}, {}.csv"
                   .format(noise_mode, ex, total_episodes, total_steps, noise_mode, mode, mode_flow_change),
                   header=False, index=False)
 
         df = pd.DataFrame(reward_converged)
-        df.to_csv("/home/tud/Github/Master-Thesis/simulation8.0/csv/{}/CR: No.{}, {}, {}, {}, {}, {}.csv"
+        df.to_csv("/home/tud/Github/Master-Thesis/simulation8.0/csv/tanh/{}/CR: No.{}, {}, {}, {}, {}, {}.csv"
                   .format(noise_mode, ex, total_episodes, total_steps, noise_mode, mode, mode_flow_change),
                   header=False, index=False)
 
