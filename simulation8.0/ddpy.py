@@ -259,7 +259,11 @@ def main():
 
     experiment = Config.experiment
 
+<<<<<<< HEAD
     for ex in range(216, experiment + 216):
+=======
+    for ex in range(601, experiment + 601):
+>>>>>>> 40bc30fdb963b896b3dbc625c46c2514cd647f3d
         # to store reward history of each episode
         ep_reward_list = [[] for i in range(mode_select)]
         ep_r_delay_list = [[] for i in range(mode_select)]
@@ -418,12 +422,20 @@ def main():
         # create csv
         # No.{ex}
         df = pd.DataFrame(ep_reward_list)
+<<<<<<< HEAD
         df.to_csv("/home/gaoyueyue/Github/Master-Thesis/simulation8.0/csv/tanh/{}/No.{}, {}, {}, {}, {}, {}.csv"
+=======
+        df.to_csv("/home/yueyue/Github/Master-Thesis/simulation8.0/csv/tanh/{}/No.{}, {}, {}, {}, {}, {}.csv"
+>>>>>>> 40bc30fdb963b896b3dbc625c46c2514cd647f3d
                   .format(noise_mode, ex, total_episodes, total_steps, noise_mode, mode, mode_flow_change),
                   header=False, index=False)
 
         df = pd.DataFrame(reward_converged)
+<<<<<<< HEAD
         df.to_csv("/home/gaoyueyue/Github/Master-Thesis/simulation8.0/csv/tanh/{}/CR: No.{}, {}, {}, {}, {}, {}.csv"
+=======
+        df.to_csv("/home/yueyue/Github/Master-Thesis/simulation8.0/csv/tanh/{}/CR: No.{}, {}, {}, {}, {}, {}.csv"
+>>>>>>> 40bc30fdb963b896b3dbc625c46c2514cd647f3d
                   .format(noise_mode, ex, total_episodes, total_steps, noise_mode, mode, mode_flow_change),
                   header=False, index=False)
 

@@ -30,7 +30,7 @@ class Config:
 
     # weights for determining reward
     a_delay = 1.0
-    a_pkt_loss = 100
+    a_pkt_loss = 1000
 
     # number of episodes, steps
     total_episodes = 300
@@ -38,7 +38,6 @@ class Config:
 
     # traffic load
     traffic_load = [0.2, 0.3, 0.5, 0.7, 1.0, 1.2]
-    # traffic_load = [0.7, 1.0, 1.2]
 
     # queue length
     queue_length = [1, 2, 3]
@@ -56,4 +55,8 @@ class Config:
     changed_flows_num = 2
 
     # number of experiments
+<<<<<<< HEAD
     experiment = 1
+=======
+    experiment = 20
+>>>>>>> 40bc30fdb963b896b3dbc625c46c2514cd647f3d
