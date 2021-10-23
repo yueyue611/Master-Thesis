@@ -259,7 +259,7 @@ def main():
 
     experiment = Config.experiment
 
-    for ex in range(502, experiment + 502):
+    for ex in range(601, experiment + 601):
         # to store reward history of each episode
         ep_reward_list = [[] for i in range(mode_select)]
         ep_r_delay_list = [[] for i in range(mode_select)]
@@ -418,12 +418,12 @@ def main():
         # create csv
         # No.{ex}
         df = pd.DataFrame(ep_reward_list)
-        df.to_csv("/home/tud/Github/Master-Thesis/simulation8.0/csv/tanh/{}/No.{}, {}, {}, {}, {}, {}.csv"
+        df.to_csv("/home/yueyue/Github/Master-Thesis/simulation8.0/csv/tanh/{}/No.{}, {}, {}, {}, {}, {}.csv"
                   .format(noise_mode, ex, total_episodes, total_steps, noise_mode, mode, mode_flow_change),
                   header=False, index=False)
 
         df = pd.DataFrame(reward_converged)
-        df.to_csv("/home/tud/Github/Master-Thesis/simulation8.0/csv/tanh/{}/CR: No.{}, {}, {}, {}, {}, {}.csv"
+        df.to_csv("/home/yueyue/Github/Master-Thesis/simulation8.0/csv/tanh/{}/CR: No.{}, {}, {}, {}, {}, {}.csv"
                   .format(noise_mode, ex, total_episodes, total_steps, noise_mode, mode, mode_flow_change),
                   header=False, index=False)
 

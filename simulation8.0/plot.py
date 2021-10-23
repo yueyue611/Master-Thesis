@@ -37,15 +37,15 @@ def main():
 
     for i in range(1, experiment + 1):
         with open(
-                "/home/tud/Github/Master-Thesis/simulation8.0/csv/tanh/{}/No.{}, {}, {}, {}, {}, {}.csv".format(
-                    noise_mode, i+500, total_episodes, total_steps, noise_mode, mode, mode_flow_change), 'r') as data_reward:
+                "/home/yueyue/Github/Master-Thesis/simulation8.0/csv/tanh/{}/No.{}, {}, {}, {}, {}, {}.csv".format(
+                    noise_mode, i+600, total_episodes, total_steps, noise_mode, mode, mode_flow_change), 'r') as data_reward:
             reader_reward = list(csv.reader(data_reward))
             for j in range(len(reader_reward)):
                 reward[i - 1].append([conv(s) for s in reader_reward[j]])
 
         with open(
-                "/home/tud/Github/Master-Thesis/simulation8.0/csv/tanh/{}/CR: No.{}, {}, {}, {}, {}, {}.csv".format(
-                    noise_mode, i+500, total_episodes, total_steps, noise_mode, mode, mode_flow_change), 'r') as data_cr:
+                "/home/yueyue/Github/Master-Thesis/simulation8.0/csv/tanh/{}/CR: No.{}, {}, {}, {}, {}, {}.csv".format(
+                    noise_mode, i+600, total_episodes, total_steps, noise_mode, mode, mode_flow_change), 'r') as data_cr:
             reader_cr = list(csv.reader(data_cr))
             for j in range(len(reader_cr)):
                 converged_reward[i - 1].append(conv(reader_cr[j][0]))
