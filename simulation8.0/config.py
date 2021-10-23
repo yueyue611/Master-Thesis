@@ -56,4 +56,4 @@ class Config:
     changed_flows_num = 2
 
     # number of experiments
-    experiment = 14
+    experiment = 1
