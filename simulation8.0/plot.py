@@ -37,11 +37,15 @@ def main():
 
     for i in range(1, experiment + 1):
         with open(
+<<<<<<< Updated upstream
 <<<<<<< HEAD
                 "/home/gaoyueyue/Github/Master-Thesis/simulation8.0/csv/tanh/{}/No.{}, {}, {}, {}, {}, {}.csv".format(
                     noise_mode, i+215, total_episodes, total_steps, noise_mode, mode, mode_flow_change), 'r') as data_reward:
 =======
                 "/home/yueyue/Github/Master-Thesis/simulation8.0/csv/tanh/{}/No.{}, {}, {}, {}, {}, {}.csv".format(
+=======
+                "/home/tud/Github/Master-Thesis/simulation8.0/csv/tanh/{}/No.{}, {}, {}, {}, {}, {}.csv".format(
+>>>>>>> Stashed changes
                     noise_mode, i+600, total_episodes, total_steps, noise_mode, mode, mode_flow_change), 'r') as data_reward:
 >>>>>>> 40bc30fdb963b896b3dbc625c46c2514cd647f3d
             reader_reward = list(csv.reader(data_reward))
@@ -49,11 +53,15 @@ def main():
                 reward[i - 1].append([conv(s) for s in reader_reward[j]])
 
         with open(
+<<<<<<< Updated upstream
 <<<<<<< HEAD
                 "/home/gaoyueyue/Github/Master-Thesis/simulation8.0/csv/tanh/{}/CR: No.{}, {}, {}, {}, {}, {}.csv".format(
                     noise_mode, i+215, total_episodes, total_steps, noise_mode, mode, mode_flow_change), 'r') as data_cr:
 =======
                 "/home/yueyue/Github/Master-Thesis/simulation8.0/csv/tanh/{}/CR: No.{}, {}, {}, {}, {}, {}.csv".format(
+=======
+                "/home/tud/Github/Master-Thesis/simulation8.0/csv/tanh/{}/CR: No.{}, {}, {}, {}, {}, {}.csv".format(
+>>>>>>> Stashed changes
                     noise_mode, i+600, total_episodes, total_steps, noise_mode, mode, mode_flow_change), 'r') as data_cr:
 >>>>>>> 40bc30fdb963b896b3dbc625c46c2514cd647f3d
             reader_cr = list(csv.reader(data_cr))

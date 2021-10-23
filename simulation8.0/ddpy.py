@@ -422,20 +422,28 @@ def main():
         # create csv
         # No.{ex}
         df = pd.DataFrame(ep_reward_list)
+<<<<<<< Updated upstream
 <<<<<<< HEAD
         df.to_csv("/home/gaoyueyue/Github/Master-Thesis/simulation8.0/csv/tanh/{}/No.{}, {}, {}, {}, {}, {}.csv"
 =======
         df.to_csv("/home/yueyue/Github/Master-Thesis/simulation8.0/csv/tanh/{}/No.{}, {}, {}, {}, {}, {}.csv"
 >>>>>>> 40bc30fdb963b896b3dbc625c46c2514cd647f3d
+=======
+        df.to_csv("/home/tud/Github/Master-Thesis/simulation8.0/csv/tanh/{}/No.{}, {}, {}, {}, {}, {}.csv"
+>>>>>>> Stashed changes
                   .format(noise_mode, ex, total_episodes, total_steps, noise_mode, mode, mode_flow_change),
                   header=False, index=False)
 
         df = pd.DataFrame(reward_converged)
+<<<<<<< Updated upstream
 <<<<<<< HEAD
         df.to_csv("/home/gaoyueyue/Github/Master-Thesis/simulation8.0/csv/tanh/{}/CR: No.{}, {}, {}, {}, {}, {}.csv"
 =======
         df.to_csv("/home/yueyue/Github/Master-Thesis/simulation8.0/csv/tanh/{}/CR: No.{}, {}, {}, {}, {}, {}.csv"
 >>>>>>> 40bc30fdb963b896b3dbc625c46c2514cd647f3d
+=======
+        df.to_csv("/home/tud/Github/Master-Thesis/simulation8.0/csv/tanh/{}/CR: No.{}, {}, {}, {}, {}, {}.csv"
+>>>>>>> Stashed changes
                   .format(noise_mode, ex, total_episodes, total_steps, noise_mode, mode, mode_flow_change),
                   header=False, index=False)
 

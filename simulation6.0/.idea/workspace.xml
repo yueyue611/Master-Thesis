@@ -5,41 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="da23a88a-44e5-481f-9f87-72ed0ffcb739" name="Changes" comment="Changes">
-      <change afterPath="$PROJECT_DIR$/../simulation8.0/all_reward.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../simulation8.0/plot_noise.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../simulation8.0/plot_noise2.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/../simulation8.0/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/csv/CR: No.1, 100, 100, TL, NONE.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/csv/CR: No.1, 200, 100, QL, NONE.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/csv/CR: No.1, 300, 100, TL, NONE.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/csv/CR: No.2, 100, 100, TL, NONE.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/csv/CR: No.2, 200, 100, QL, NONE.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/csv/CR: No.2, 300, 100, TL, NONE.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/csv/CR: No.3, 100, 100, TL, NONE.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/csv/CR: No.3, 200, 100, QL, NONE.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/csv/CR: No.3, 300, 100, QL, NONE.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/csv/CR: No.3, 300, 100, TL, NONE.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/csv/CR: No.4, 100, 100, TL, NONE.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/csv/CR: No.5, 100, 100, TL, NONE.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/csv/Gaussian/Gaussian.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/csv/No.1, 100, 100, QL, NONE.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/csv/No.1, 100, 100, TL, NONE.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/csv/No.1, 200, 100, QL, NONE.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/csv/No.1, 300, 100, TL, NONE.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/csv/No.2, 100, 100, TL, NONE.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/csv/No.2, 200, 100, QL, NONE.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/csv/No.2, 300, 100, TL, NONE.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/csv/No.3, 100, 100, TL, NONE.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/csv/No.3, 200, 100, QL, NONE.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/csv/No.3, 300, 100, QL, NONE.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/csv/No.3, 300, 100, TL, NONE.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/csv/No.4, 100, 100, TL, NONE.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/csv/No.5, 100, 100, TL, NONE.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/csv/OU/OU.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../simulation8.0/.idea/simulation8.0.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../simulation8.0/.idea/simulation8.0.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../simulation8.0/ddpy.py" beforeDir="false" afterPath="$PROJECT_DIR$/../simulation8.0/ddpy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/env.py" beforeDir="false" afterPath="$PROJECT_DIR$/../simulation8.0/env.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/noise.py" beforeDir="false" afterPath="$PROJECT_DIR$/../simulation8.0/noise.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../simulation8.0/plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/../simulation8.0/plot.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
