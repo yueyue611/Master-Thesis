@@ -104,21 +104,24 @@ mean = 0
 self.x_prev = np.ones(self.processes) * self.mean
 
 TL:
-100: index1 = 0  # queue_length = 1 TL=[0.7, 1.0, 1.2]
-110: index1 = 0  # queue_length = 1 
+1: index1 = 0  # queue_length = 1       a_pkt_loss = 1000   (gaussian)
+100: index1 = 0  # queue_length = 1     a_pkt_loss = 1000   (ou: TL=[0.7, 1.0, 1.2])
+110: index1 = 0  # queue_length = 1     a_pkt_loss = 100
 
-200: index1 = 1  # queue_length = 2
+200: index1 = 1  # queue_length = 2     a_pkt_loss = 1000
+215: index1 = 1  # queue_length = 2     a_pkt_loss = 100
 
 300: index1 = 0  # queue_length = 1     a_pkt_loss = 500
 
 400: index1 = 1  # queue_length = 2     a_pkt_loss = 500
 
-500: index1 = 2  # queue_length = 3
+500: index1 = 2  # queue_length = 3     a_pkt_loss = 100
+600: index1 = 2  # queue_length = 3     a_pkt_loss = 1000
 
 QL:
-1: 100: index2 = 4  # traffic load = 1
+1: index2 = 4 TL=1.0  # traffic load = 1 a_pkt_loss = 1000
 
-
+100: index2 = 4 TL=1.0  # traffic load = 1 a_pkt_loss = 100
 
 
 

@@ -37,33 +37,15 @@ def main():
 
     for i in range(1, experiment + 1):
         with open(
-<<<<<<< Updated upstream
-<<<<<<< HEAD
-                "/home/gaoyueyue/Github/Master-Thesis/simulation8.0/csv/tanh/{}/No.{}, {}, {}, {}, {}, {}.csv".format(
-                    noise_mode, i+215, total_episodes, total_steps, noise_mode, mode, mode_flow_change), 'r') as data_reward:
-=======
-                "/home/yueyue/Github/Master-Thesis/simulation8.0/csv/tanh/{}/No.{}, {}, {}, {}, {}, {}.csv".format(
-=======
                 "/home/tud/Github/Master-Thesis/simulation8.0/csv/tanh/{}/No.{}, {}, {}, {}, {}, {}.csv".format(
->>>>>>> Stashed changes
-                    noise_mode, i+600, total_episodes, total_steps, noise_mode, mode, mode_flow_change), 'r') as data_reward:
->>>>>>> 40bc30fdb963b896b3dbc625c46c2514cd647f3d
+                    noise_mode, i, total_episodes, total_steps, noise_mode, mode, mode_flow_change), 'r') as data_reward:
             reader_reward = list(csv.reader(data_reward))
             for j in range(len(reader_reward)):
                 reward[i - 1].append([conv(s) for s in reader_reward[j]])
 
         with open(
-<<<<<<< Updated upstream
-<<<<<<< HEAD
-                "/home/gaoyueyue/Github/Master-Thesis/simulation8.0/csv/tanh/{}/CR: No.{}, {}, {}, {}, {}, {}.csv".format(
-                    noise_mode, i+215, total_episodes, total_steps, noise_mode, mode, mode_flow_change), 'r') as data_cr:
-=======
-                "/home/yueyue/Github/Master-Thesis/simulation8.0/csv/tanh/{}/CR: No.{}, {}, {}, {}, {}, {}.csv".format(
-=======
                 "/home/tud/Github/Master-Thesis/simulation8.0/csv/tanh/{}/CR: No.{}, {}, {}, {}, {}, {}.csv".format(
->>>>>>> Stashed changes
-                    noise_mode, i+600, total_episodes, total_steps, noise_mode, mode, mode_flow_change), 'r') as data_cr:
->>>>>>> 40bc30fdb963b896b3dbc625c46c2514cd647f3d
+                    noise_mode, i, total_episodes, total_steps, noise_mode, mode, mode_flow_change), 'r') as data_cr:
             reader_cr = list(csv.reader(data_cr))
             for j in range(len(reader_cr)):
                 converged_reward[i - 1].append(conv(reader_cr[j][0]))
@@ -106,9 +88,20 @@ def main():
     # plt.savefig('Avg. Episodic Reward.png', dpi=300, bbox_inches='tight')
     plt.show()
 
+    m1 = np.array(converged_reward).mean(axis=0)
+    # st1 = np.array(converged_reward).std(axis=0)
+    median1 = np.median(converged_reward, axis=0)
+
     figure1, axes1 = plt.subplots()
-    axes1.boxplot(np.array(converged_reward), labels=labels, sym="o", vert=True, patch_artist=True)
+    bp = axes1.boxplot(np.array(converged_reward), labels=labels, sym="o", vert=True, patch_artist=True, showmeans=True)
     axes1.set_ylabel('Avg. Reward after Convergence')
+
+    for i, line in enumerate(bp['medians']):
+        x, y = line.get_xydata()[1]
+        # text = 'm={:.2f}\n μ={:.2f}\n σ={:.2f}'.format(median1[i], m1[i], st1[i])
+        text = 'm={:.2f}\n μ={:.2f}'.format(median1[i], m1[i])
+        axes1.annotate(text, xy=(x, y))
+
     # plt.savefig('Avg. Reward after Convergence.png', dpi=300, bbox_inches='tight')
     plt.show()
 

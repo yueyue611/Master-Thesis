@@ -16,8 +16,8 @@ class Config:
     lower_bound = 0.01
 
     # noise type
-    noise = "OU"
-    # noise = "Gaussian"
+    # noise = "OU"
+    noise = "Gaussian"
 
     # Learning rate for actor-critic models
     critic_lr = 0.002
@@ -30,10 +30,10 @@ class Config:
 
     # weights for determining reward
     a_delay = 1.0
-    a_pkt_loss = 1000
+    a_pkt_loss = 100
 
     # number of episodes, steps
-    total_episodes = 300
+    total_episodes = 100
     total_steps = 100
 
     # traffic load
@@ -43,7 +43,7 @@ class Config:
     queue_length = [1, 2, 3]
 
     # select mode
-    mode = "TL"  # "TL" or "QL"
+    mode = "QL"  # "TL" or "QL"
     if mode == "TL":
         mode_select = len(traffic_load)
     else:
@@ -51,12 +51,9 @@ class Config:
 
     # JOIN or LEAVE after N episodes
     N = 50
-    mode_flow_change = "NONE"  # "JOIN" or "LEAVE" or "NONE"
+    mode_flow_change = "JOIN"  # "JOIN" or "LEAVE" or "NONE"
     changed_flows_num = 2
 
     # number of experiments
-<<<<<<< HEAD
     experiment = 1
-=======
-    experiment = 20
->>>>>>> 40bc30fdb963b896b3dbc625c46c2514cd647f3d
+

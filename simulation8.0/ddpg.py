@@ -259,11 +259,7 @@ def main():
 
     experiment = Config.experiment
 
-<<<<<<< HEAD
-    for ex in range(216, experiment + 216):
-=======
-    for ex in range(601, experiment + 601):
->>>>>>> 40bc30fdb963b896b3dbc625c46c2514cd647f3d
+    for ex in range(106, experiment + 106):
         # to store reward history of each episode
         ep_reward_list = [[] for i in range(mode_select)]
         ep_r_delay_list = [[] for i in range(mode_select)]
@@ -333,7 +329,7 @@ def main():
                         flow_traffic, queue_length_select = mode_selection(mode_select, len_traffic_load, queue_length,
                                                                            flows_tl, ft)
                         # use action from last episode
-                        action = np.array(action).reshape((nodes, nodes))
+                        action = np.array(action).reshape((nodes * 2, nodes))
                         prev_state = env.reset(action, flow_traffic)
                         # update all paths
                         all_paths = env.get_all_paths()
@@ -422,28 +418,12 @@ def main():
         # create csv
         # No.{ex}
         df = pd.DataFrame(ep_reward_list)
-<<<<<<< Updated upstream
-<<<<<<< HEAD
-        df.to_csv("/home/gaoyueyue/Github/Master-Thesis/simulation8.0/csv/tanh/{}/No.{}, {}, {}, {}, {}, {}.csv"
-=======
-        df.to_csv("/home/yueyue/Github/Master-Thesis/simulation8.0/csv/tanh/{}/No.{}, {}, {}, {}, {}, {}.csv"
->>>>>>> 40bc30fdb963b896b3dbc625c46c2514cd647f3d
-=======
         df.to_csv("/home/tud/Github/Master-Thesis/simulation8.0/csv/tanh/{}/No.{}, {}, {}, {}, {}, {}.csv"
->>>>>>> Stashed changes
                   .format(noise_mode, ex, total_episodes, total_steps, noise_mode, mode, mode_flow_change),
                   header=False, index=False)
 
         df = pd.DataFrame(reward_converged)
-<<<<<<< Updated upstream
-<<<<<<< HEAD
-        df.to_csv("/home/gaoyueyue/Github/Master-Thesis/simulation8.0/csv/tanh/{}/CR: No.{}, {}, {}, {}, {}, {}.csv"
-=======
-        df.to_csv("/home/yueyue/Github/Master-Thesis/simulation8.0/csv/tanh/{}/CR: No.{}, {}, {}, {}, {}, {}.csv"
->>>>>>> 40bc30fdb963b896b3dbc625c46c2514cd647f3d
-=======
         df.to_csv("/home/tud/Github/Master-Thesis/simulation8.0/csv/tanh/{}/CR: No.{}, {}, {}, {}, {}, {}.csv"
->>>>>>> Stashed changes
                   .format(noise_mode, ex, total_episodes, total_steps, noise_mode, mode, mode_flow_change),
                   header=False, index=False)
 

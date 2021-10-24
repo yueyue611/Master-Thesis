@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../ddpg_routing/.idea/ddpg_routing.iml" filepath="$PROJECT_DIR$/../ddpg_routing/.idea/ddpg_routing.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/simulation6.0.iml" filepath="$PROJECT_DIR$/.idea/simulation6.0.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../simulation7.0/.idea/simulation7.0.iml" filepath="$PROJECT_DIR$/../simulation7.0/.idea/simulation7.0.iml" />
       <module fileurl="file://$PROJECT_DIR$/../simulation8.0/.idea/simulation8.0.iml" filepath="$PROJECT_DIR$/../simulation8.0/.idea/simulation8.0.iml" />
     </modules>
   </component>

@@ -5,9 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="da23a88a-44e5-481f-9f87-72ed0ffcb739" name="Changes" comment="Changes">
+      <change afterPath="$PROJECT_DIR$/../ddpg_routing/.idea/ddpg_routing.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/simulation6.0.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/simulation6.0.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/.idea/simulation8.0.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../simulation8.0/.idea/simulation8.0.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/ddpy.py" beforeDir="false" afterPath="$PROJECT_DIR$/../simulation8.0/ddpy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../simulation8.0/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/../simulation8.0/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../simulation8.0/csv/readme" beforeDir="false" afterPath="$PROJECT_DIR$/../simulation8.0/csv/readme" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../simulation8.0/csv/tanh/OU/No.1, 300, 100, OU, QL, NONE.csv" beforeDir="false" afterPath="$PROJECT_DIR$/../simulation8.0/csv/tanh/OU/No.1, 300, 100, OU, QL, NONE.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../simulation8.0/ddpy.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../simulation8.0/plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/../simulation8.0/plot.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -42,7 +49,8 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../simulation8.0" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../ddpg_routing" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
@@ -55,41 +63,20 @@
       <recent name="$PROJECT_DIR$/../simulation7.0/pic" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.ddpy">
-    <configuration name="all_reward" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="simulation8.0" />
+  <component name="RunManager" selected="Python.plot">
+    <configuration name="ddpg" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="ddpg_routing" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../simulation8.0" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../ddpg_routing" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../simulation8.0/all_reward.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="ddpy" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="simulation8.0" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../simulation8.0" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../simulation8.0/ddpy.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../ddpg_routing/ddpg.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -99,60 +86,18 @@
       <method v="2" />
     </configuration>
     <configuration name="plot" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="simulation8.0" />
+      <module name="ddpg_routing" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../simulation8.0" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../ddpg_routing" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../simulation8.0/plot.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="plot_noise" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="simulation8.0" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../simulation8.0" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../simulation8.0/plot_noise.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="plot_noise2" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="simulation8.0" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../simulation8.0" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../simulation8.0/plot_noise2.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../ddpg_routing/plot.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -163,11 +108,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.ddpy" />
-        <item itemvalue="Python.all_reward" />
         <item itemvalue="Python.plot" />
-        <item itemvalue="Python.plot_noise" />
-        <item itemvalue="Python.plot_noise2" />
+        <item itemvalue="Python.ddpg" />
       </list>
     </recent_temporary>
   </component>
