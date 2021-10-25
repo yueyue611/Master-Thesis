@@ -5,17 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="da23a88a-44e5-481f-9f87-72ed0ffcb739" name="Changes" comment="Changes">
-      <change afterPath="$PROJECT_DIR$/../ddpg_routing/.idea/ddpg_routing.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/simulation6.0.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/simulation6.0.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ddpg_routing/plot_approach.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ddpg_routing/all_reward.py" beforeDir="false" afterPath="$PROJECT_DIR$/../ddpg_routing/all_reward.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ddpg_routing/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/../ddpg_routing/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ddpg_routing/ddpg.py" beforeDir="false" afterPath="$PROJECT_DIR$/../ddpg_routing/ddpg.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ddpg_routing/env.py" beforeDir="false" afterPath="$PROJECT_DIR$/../ddpg_routing/env.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ddpg_routing/plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/../ddpg_routing/plot.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/../simulation8.0/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/csv/readme" beforeDir="false" afterPath="$PROJECT_DIR$/../simulation8.0/csv/readme" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/csv/tanh/OU/No.1, 300, 100, OU, QL, NONE.csv" beforeDir="false" afterPath="$PROJECT_DIR$/../simulation8.0/csv/tanh/OU/No.1, 300, 100, OU, QL, NONE.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/ddpy.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../simulation8.0/plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/../simulation8.0/plot.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,7 +59,28 @@
       <recent name="$PROJECT_DIR$/../simulation7.0/pic" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.plot">
+  <component name="RunManager" selected="Python.plot_approach">
+    <configuration name="all_reward" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="ddpg_routing" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../ddpg_routing" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../ddpg_routing/all_reward.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="ddpg" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ddpg_routing" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -106,9 +123,32 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="plot_approach" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="ddpg_routing" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../ddpg_routing" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../ddpg_routing/plot_approach.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.plot_approach" />
         <item itemvalue="Python.plot" />
+        <item itemvalue="Python.all_reward" />
         <item itemvalue="Python.ddpg" />
       </list>
     </recent_temporary>

@@ -91,7 +91,7 @@ class Graph:
 
 
 class Env:
-    def __init__(self, flows, nodes, max_bw, max_link_lt, action_mode):
+    def __init__(self, flows, nodes, max_bw, max_link_lt, case, action_mode):
         # number of switches
         self.total_switches = nodes
         # maximum bandwidth
@@ -99,6 +99,7 @@ class Env:
         # max link latency
         self.max_link_latency = max_link_lt
         # action space choice
+        self.case = case
         self.action_mode = action_mode
 
         # creates a graph for the above topology
@@ -203,6 +204,40 @@ class Env:
             opt_path.append(self.graph.dijkstra(self.flows[i][0], self.flows[i][1], weights))
         return opt_path
 
+    def get_opt_path_new(self, weights, flow_traffic):
+        opt_path = []
+        flows_group = [[self.flows[0][0], self.flows[0][1], [flow_traffic[0]]]]
+        index = 0
+        for i in range(1, self.total_flows):
+            if self.flows[i][0] == flows_group[index][0] and self.flows[i][1] == flows_group[index][1]:
+                flows_group[index][2].append(flow_traffic[i])
+            else:
+                flows_group.append([self.flows[i][0], self.flows[i][1], [flow_traffic[i]]])
+                index += 1
+        for j in range(0, len(flows_group)):
+            if len(flows_group[j][2]) == 1:
+                opt_path.append(self.graph.dijkstra(flows_group[j][0], flows_group[j][1], weights))
+            else:
+                all_paths_onepair = self.graph.print_all_paths(flows_group[j][0], flows_group[j][1])
+                for k in range(0, len(all_paths_onepair)):
+                    distance = 0
+                    for l in range(0, len(all_paths_onepair[k])-1):
+                        distance += weights[all_paths_onepair[k][l]][all_paths_onepair[k][l+1]]
+                    all_paths_onepair[k].append(distance)
+                # all possible paths are sorted according to the aggregated weights
+                all_paths_onepair.sort(key=lambda x: (x[-1]))
+                path_id = 0
+                start = 0
+                opt_path.append(all_paths_onepair[path_id][:-1])  # [:-1]: exclude the last item distance
+                for end in range(1, len(flows_group[j][2])):
+                    if sum(flows_group[j][2][start:end+1]) <= self.max_bandwidth:
+                        opt_path.append(all_paths_onepair[path_id][:-1])
+                    else:
+                        path_id = (path_id + 1) % len(all_paths_onepair)
+                        opt_path.append(all_paths_onepair[path_id][:-1])
+                        start = end
+        return opt_path
+
     # get optimal path for different groups
     # weights here is action
     def get_opt_path_advance(self, action, flow_traffic):
@@ -225,8 +260,7 @@ class Env:
                     bandwidth = 1
                     for l in range(0, len(all_paths_onepair[k])-1):
                         distance += action[all_paths_onepair[k][l]][all_paths_onepair[k][l+1]]
-                        bandwidth = min(bandwidth, action[all_paths_onepair[k][l] + self.total_switches *
-                                                          (self.action_mode - 1)][all_paths_onepair[k][l+1]])
+                        bandwidth = min(bandwidth, action[all_paths_onepair[k][l] + self.total_switches][all_paths_onepair[k][l+1]])
                     all_paths_onepair[k].append([distance, bandwidth])
                 # all possible paths are sorted according to the aggregated weights
                 all_paths_onepair.sort(key=lambda x: (x[-1][0]))
@@ -269,7 +303,12 @@ class Env:
 
     def step(self, action, flow_traffic, queue_length_select, a_delay, a_pkt_loss):
         action_w = np.array(action).reshape((self.total_switches * self.action_mode, self.total_switches))
-        optimal_path = self.get_opt_path_advance(action_w, flow_traffic)  # modify!!!
+        if self.case == "Advance":
+            optimal_path = self.get_opt_path_advance(action_w, flow_traffic)  # modify!!!
+        elif self.case == "New":
+            optimal_path = self.get_opt_path_new(action_w, flow_traffic)
+        else:
+            optimal_path = self.get_opt_path(action_w)
         state = self.get_state(optimal_path, flow_traffic)
         reward, r_delay, avg_delay, r_pkt_loss = self.get_reward(state, optimal_path, queue_length_select, a_delay, a_pkt_loss)
         return state, reward, r_delay, avg_delay, r_pkt_loss

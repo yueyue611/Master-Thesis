@@ -17,8 +17,9 @@ flows = Config.flows
 nodes = Config.nodes
 max_bw = Config.max_bw
 max_link_lt = Config.max_link_lt
+case = Config.case
 action_mode = Config.action_mode
-env = Env(flows, nodes, max_bw, max_link_lt, action_mode)
+env = Env(flows, nodes, max_bw, max_link_lt, case, action_mode)
 
 state_dim, action_dim = env.observation_space()
 print("Size of State Space ->  {}".format(state_dim))
@@ -192,7 +193,7 @@ def policy(actor_model, state, noise, weights_original, indicator, exploration_r
 
 def mode_selection(mode_select, len_traffic_load, queue_length, flows_tl, ft):
     if mode_select == len_traffic_load:
-        index1 = 1  # queue_length = 2
+        index1 = 0  # queue_length = 1
         queue_length_select = queue_length[index1]
         flow_traffic = [flows_tl[ft][i][2] for i in range(len(flows_tl[ft]))]
     else:
@@ -264,7 +265,7 @@ def main():
 
     experiment = Config.experiment
 
-    for ex in range(1, experiment + 1):
+    for ex in range(11, experiment + 11):
         # to store reward history of each episode
         ep_reward_list = [[] for i in range(mode_select)]
         ep_r_delay_list = [[] for i in range(mode_select)]
@@ -475,13 +476,20 @@ def main():
             # test
             tf_prev_state_test = tf.convert_to_tensor(prev_state.reshape(1, nodes ** 2))
             action_test = policy(actor_model, tf_prev_state_test, noise, weights_original, 0)  # 0 for test
-            opt_path_list[ft].append(env.get_opt_path_advance(np.array(action_test).reshape((nodes * action_mode, nodes)),
-                                                              flow_traffic))
+            if case == "Advance":
+                opt_path_list[ft].append(
+                    env.get_opt_path_advance(np.array(action_test).reshape((nodes * action_mode, nodes)), flow_traffic))
+            elif case == "New":
+                opt_path_list[ft].append(
+                    env.get_opt_path_new(np.array(action_test).reshape((nodes * action_mode, nodes)), flow_traffic))
+            else:
+                opt_path_list[ft].append(env.get_opt_path(np.array(action_test).reshape((nodes * action_mode, nodes))))
         print("opt_path_list", opt_path_list)
 
         # create csv
         # No.{ex}
-        folder = "test"
+        folder = "Join, 100, QL=1"
+        # folder = "test"
 
         df = pd.DataFrame(ep_reward_list)
         df.to_csv("/home/tud/Github/Master-Thesis/ddpg_routing/csv/{}/{}/No.{}, {}, {}, {}, {}, {}.csv"

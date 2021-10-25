@@ -12,7 +12,12 @@ class Config:
     max_link_lt = 10
 
     # action mode defining two kinds of action space
-    action_mode = 2  # 1 for Link Weight, 2 for Link Weight & Bandwidth Parameter
+    case = "Old"  # "Old" for using dijkstra, "New" for Link Weight, "Advance" for Link Weight & Bandwidth Parameter
+    # action_dim = nodes ** 2 * action_mode
+    if case == "Advance":
+        action_mode = 2
+    else:
+        action_mode = 1
 
     # action boundary
     upper_bound = 1
@@ -36,7 +41,7 @@ class Config:
     a_pkt_loss = 100
 
     # number of episodes, steps
-    total_episodes = 200
+    total_episodes = 300
     total_steps = 100
 
     # traffic load
@@ -59,4 +64,4 @@ class Config:
     changed_flows_num = 2
 
     # number of experiments
-    experiment = 1
+    experiment = 20
