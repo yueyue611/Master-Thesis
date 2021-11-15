@@ -193,7 +193,7 @@ def policy(actor_model, state, noise, weights_original, indicator, exploration_r
 
 def mode_selection(mode_select, len_traffic_load, queue_length, flows_tl, ft):
     if mode_select == len_traffic_load:
-        index1 = 0  # queue_length = 1
+        index1 = 2  # queue_length = 3
         queue_length_select = queue_length[index1]
         flow_traffic = [flows_tl[ft][i][2] for i in range(len(flows_tl[ft]))]
     else:
@@ -265,7 +265,7 @@ def main():
 
     experiment = Config.experiment
 
-    for ex in range(11, experiment + 11):
+    for ex in range(1, experiment + 1):
         # to store reward history of each episode
         ep_reward_list = [[] for i in range(mode_select)]
         ep_r_delay_list = [[] for i in range(mode_select)]
@@ -488,7 +488,7 @@ def main():
 
         # create csv
         # No.{ex}
-        folder = "Join, 100, QL=1"
+        folder = "test"
         # folder = "test"
 
         df = pd.DataFrame(ep_reward_list)

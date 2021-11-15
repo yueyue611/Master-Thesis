@@ -140,7 +140,7 @@ class Env:
         self.flows = [[0, 4, 10], [0, 4, 10], [0, 4, 10], [0, 4, 10], [2, 0, 10]]
         # self.flows = [[0, 4, 10], [0, 4, 10], [0, 4, 10], [0, 4, 10], [2, 0, 10], [0, 4, 10], [2, 0, 10]]
         # self.flows = [[0, 4, 10], [0, 4, 10], [0, 4, 10]]
-        # np.random.seed(0)
+        # np.random.seed(5)
         # self.flows = self.get_flows(self.total_flows)  # randomly generated flows
         self.flows.sort(key=lambda x: (x[0], x[1], x[2]))
 
@@ -150,8 +150,8 @@ class Env:
             [node_i, node_j] = np.random.choice(self.total_switches, 2, replace=False)
             flows[i][0] = node_i
             flows[i][1] = node_j
-            flows[i][2] = self.max_bandwidth
-            # flows[i][2] = np.random.randint(1, self.max_bandwidth)  # random flow traffic can not be 0
+            # flows[i][2] = self.max_bandwidth
+            flows[i][2] = np.random.randint(1, self.max_bandwidth)  # random flow traffic can not be 0
         return flows
 
     def new_flows(self, mode_flow_change, random_flows_change, changed_flows_num):

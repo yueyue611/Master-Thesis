@@ -18,9 +18,13 @@ a_pkt_loss = Config.a_pkt_loss
 traffic_load = Config.traffic_load
 flows_tl = env.get_flow_tl(traffic_load)
 
-queue_length = Config.queue_length[0]
+queue_length = Config.queue_length[0]  # QLU
 
 optimal_path = []
+r = [[] for _ in range(len(traffic_load))]
+
+spf_Flag = True
+
 
 # Advance
 """
@@ -36,16 +40,22 @@ optimal_path = [([0, 4], [0, 4], [0, 3, 4], [0, 1, 2, 4], [2, 4, 0]), ([0, 4], [
                 ([0, 4], [0, 3, 4], [0, 3, 4], [0, 1, 2, 4], [2, 4, 0]), ([0, 4], [0, 1, 2, 4], [0, 3, 4], [0, 1, 2, 4], [2, 4, 0])]
 """
 
+# old
+"""
+optimal_path = [([0, 4], [0, 4], [0, 4], [0, 4], [2, 4, 0]), ([0, 4], [0, 4], [0, 4], [0, 4], [2, 1, 0]),
+                ([0, 4], [0, 4], [0, 4], [0, 4], [2, 4, 3, 0]), ([0, 3, 4], [0, 3, 4], [0, 3, 4], [0, 3, 4], [2, 4, 0]),
+                ([0, 3, 4], [0, 3, 4], [0, 3, 4], [0, 3, 4], [2, 1, 0]), ([0, 3, 4], [0, 3, 4], [0, 3, 4], [0, 3, 4], [2, 4, 3, 0]),
+                ([0, 1, 2, 4], [0, 1, 2, 4], [0, 1, 2, 4], [0, 1, 2, 4], [2, 4, 0]), ([0, 1, 2, 4], [0, 1, 2, 4], [0, 1, 2, 4], [0, 1, 2, 4], [2, 1, 0]),
+                ([0, 1, 2, 4], [0, 1, 2, 4], [0, 1, 2, 4], [0, 1, 2, 4], [2, 4, 3, 0])]
+"""
+
 # SPF
-spf_Flag = True
 if spf_Flag:
     paths = []
     for i in range(0, flows):
         paths = env.get_opt_path(env.latency)
     optimal_path.append(paths)
     r_spf = []
-
-r = [[] for _ in range(len(traffic_load))]
 
 for j in range(0, len(traffic_load)):
     for k in range(0, len(optimal_path)):
@@ -56,7 +66,7 @@ for j in range(0, len(traffic_load)):
 
 for j in range(0, len(traffic_load)):
     r[j].sort(key=lambda x: (x[:][0]), reverse=True)
-    print(r[j][0])
+    print(r[j])
     print("\n")
     if spf_Flag:
         r_spf.append(r[j][0][0])
@@ -64,11 +74,8 @@ for j in range(0, len(traffic_load)):
 if spf_Flag:
     print(r_spf)
     folder = "spf"
-    index = 0
+    index = 100
     df = pd.DataFrame(r_spf)
     df.to_csv("/home/tud/Github/Master-Thesis/ddpg_routing/csv/{}/spf, {}, {}.csv"
               .format(folder, index, flows), header=False, index=False)
-
-
-
 

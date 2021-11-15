@@ -5,12 +5,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="da23a88a-44e5-481f-9f87-72ed0ffcb739" name="Changes" comment="Changes">
-      <change afterPath="$PROJECT_DIR$/../ddpg_routing/plot_approach.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ddpg_routing/plot_random.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../ddpg_routing/all_reward.py" beforeDir="false" afterPath="$PROJECT_DIR$/../ddpg_routing/all_reward.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../ddpg_routing/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/../ddpg_routing/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ddpg_routing/csv/spf/spf, 0, 5.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ddpg_routing/csv/test/Gaussian/CE2: No.1, 300, 100, Gaussian, TL, NONE.csv" beforeDir="false" afterPath="$PROJECT_DIR$/../ddpg_routing/csv/test/Gaussian/CE2: No.1, 300, 100, Gaussian, TL, NONE.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ddpg_routing/csv/test/Gaussian/CE: No.1, 300, 100, Gaussian, TL, NONE.csv" beforeDir="false" afterPath="$PROJECT_DIR$/../ddpg_routing/csv/test/Gaussian/CE: No.1, 300, 100, Gaussian, TL, NONE.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ddpg_routing/csv/test/Gaussian/CR2: No.1, 300, 100, Gaussian, TL, NONE.csv" beforeDir="false" afterPath="$PROJECT_DIR$/../ddpg_routing/csv/test/Gaussian/CR2: No.1, 300, 100, Gaussian, TL, NONE.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ddpg_routing/csv/test/Gaussian/CR: No.1, 300, 100, Gaussian, TL, NONE.csv" beforeDir="false" afterPath="$PROJECT_DIR$/../ddpg_routing/csv/test/Gaussian/CR: No.1, 300, 100, Gaussian, TL, NONE.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ddpg_routing/csv/test/Gaussian/No.1, 300, 100, Gaussian, TL, NONE.csv" beforeDir="false" afterPath="$PROJECT_DIR$/../ddpg_routing/csv/test/Gaussian/No.1, 300, 100, Gaussian, TL, NONE.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ddpg_routing/csv/test/Gaussian/avg_delay: No.1, 300, 100, Gaussian, TL, NONE.csv" beforeDir="false" afterPath="$PROJECT_DIR$/../ddpg_routing/csv/test/Gaussian/avg_delay: No.1, 300, 100, Gaussian, TL, NONE.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ddpg_routing/csv/test/Gaussian/r_delay: No.1, 300, 100, Gaussian, TL, NONE.csv" beforeDir="false" afterPath="$PROJECT_DIR$/../ddpg_routing/csv/test/Gaussian/r_delay: No.1, 300, 100, Gaussian, TL, NONE.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ddpg_routing/csv/test/Gaussian/r_pkt: No.1, 300, 100, Gaussian, TL, NONE.csv" beforeDir="false" afterPath="$PROJECT_DIR$/../ddpg_routing/csv/test/Gaussian/r_pkt: No.1, 300, 100, Gaussian, TL, NONE.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../ddpg_routing/ddpg.py" beforeDir="false" afterPath="$PROJECT_DIR$/../ddpg_routing/ddpg.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../ddpg_routing/env.py" beforeDir="false" afterPath="$PROJECT_DIR$/../ddpg_routing/env.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../ddpg_routing/plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/../ddpg_routing/plot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ddpg_routing/plot_approach.py" beforeDir="false" afterPath="$PROJECT_DIR$/../ddpg_routing/plot_approach.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ddpg_routing/plot_noise.py" beforeDir="false" afterPath="$PROJECT_DIR$/../ddpg_routing/plot_noise.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -59,7 +70,7 @@
       <recent name="$PROJECT_DIR$/../simulation7.0/pic" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.plot_approach">
+  <component name="RunManager" selected="Python.all_reward">
     <configuration name="all_reward" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ddpg_routing" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -144,12 +155,34 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="plot_random" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="ddpg_routing" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../ddpg_routing" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../ddpg_routing/plot_random.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.plot_approach" />
-        <item itemvalue="Python.plot" />
         <item itemvalue="Python.all_reward" />
         <item itemvalue="Python.ddpg" />
+        <item itemvalue="Python.plot_random" />
+        <item itemvalue="Python.plot" />
+        <item itemvalue="Python.plot_approach" />
       </list>
     </recent_temporary>
   </component>

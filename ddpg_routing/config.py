@@ -12,7 +12,7 @@ class Config:
     max_link_lt = 10
 
     # action mode defining two kinds of action space
-    case = "Old"  # "Old" for using dijkstra, "New" for Link Weight, "Advance" for Link Weight & Bandwidth Parameter
+    case = "Advance"  # "Old" for using dijkstra, "New" for Link Weight, "Advance" for Link Weight & Bandwidth Parameter
     # action_dim = nodes ** 2 * action_mode
     if case == "Advance":
         action_mode = 2
@@ -46,6 +46,7 @@ class Config:
 
     # traffic load
     traffic_load = [0.2, 0.3, 0.5, 0.7, 1.0, 1.2]
+    #traffic_load = [1.0]
 
     # queue length
     queue_length = [1, 2, 3]

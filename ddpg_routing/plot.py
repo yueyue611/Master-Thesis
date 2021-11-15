@@ -44,8 +44,7 @@ def main():
     converged_ep2 = [[] for _ in range(0, experiment)]
     converged_reward2 = [[] for _ in range(0, experiment)]
 
-    folder = "100, TL=1.0"
-    # folder = "test"
+    folder = "Leave, 100, QL=1"
 
     for i in range(1, experiment + 1):
         with open(
@@ -157,47 +156,47 @@ def main():
 
     plt.figure()
     x = np.linspace(0, total_episodes - 1, num=total_episodes)
-    for i in range(mode_select):
-        plt.plot(x, expect_reward[i][0], linewidth=0.5, linestyle='-', markersize=2, label=labels[i])
+    for i in range(4, 5):
+        plt.plot(x, expect_reward[i][0], linewidth=1, linestyle='-', markersize=2, label=labels[i])
         plt.fill_between(x, low_bound_reward[i], high_bound_reward[i], alpha=0.5)
     plt.legend()
     plt.xlabel("episode")
     plt.ylabel("avg. reward")
     plt.grid()
-    # plt.savefig('Avg. Episodic Reward.pdf', dpi=300, bbox_inches='tight')
+    plt.savefig('Avg. Reward.png', dpi=300, bbox_inches='tight')
     plt.show()
 
     plt.figure()
-    for i in range(mode_select):
-        plt.plot(x, expect_r_delay[i][0], linewidth=0.5, linestyle='-', markersize=2, label=labels[i])
+    for i in range(4, 5):
+        plt.plot(x, expect_r_delay[i][0], linewidth=1, linestyle='-', markersize=2, label=labels[i])
         plt.fill_between(x, low_bound_r_delay[i], high_bound_r_delay[i], alpha=0.5)
     plt.legend()
     plt.xlabel("episode")
     plt.ylabel("avg. r_delay")
     plt.grid()
-    # plt.savefig('Avg. Episodic r_delay.pdf', dpi=300, bbox_inches='tight')
+    plt.savefig('Avg. r_delay.png', dpi=300, bbox_inches='tight')
     plt.show()
 
     plt.figure()
-    for i in range(mode_select):
-        plt.plot(x, expect_avg_delay[i][0], linewidth=0.5, linestyle='-', markersize=2, label=labels[i])
+    for i in range(4, 5):
+        plt.plot(x, expect_avg_delay[i][0], linewidth=1, linestyle='-', markersize=2, label=labels[i])
         plt.fill_between(x, low_bound_avg_delay[i], high_bound_avg_delay[i], alpha=0.5)
     plt.legend()
     plt.xlabel("episode")
     plt.ylabel("avg. avg_delay")
     plt.grid()
-    # plt.savefig('Avg. Episodic avg_delay.pdf', dpi=300, bbox_inches='tight')
+    plt.savefig('Avg. avg_delay.png', dpi=300, bbox_inches='tight')
     plt.show()
 
     plt.figure()
-    for i in range(mode_select):
-        plt.plot(x, expect_r_pkt[i][0], linewidth=0.5, linestyle='-', markersize=2, label=labels[i])
+    for i in range(4, 5):
+        plt.plot(x, expect_r_pkt[i][0], linewidth=1, linestyle='-', markersize=2, label=labels[i])
         plt.fill_between(x, low_bound_r_pkt[i], high_bound_r_pkt[i], alpha=0.5)
     plt.legend()
     plt.xlabel("episode")
     plt.ylabel("avg. r_pkt")
     plt.grid()
-    # plt.savefig('Avg. Episodic r_pkt.pdf', dpi=300, bbox_inches='tight')
+    plt.savefig('Avg. r_pkt.png', dpi=300, bbox_inches='tight')
     plt.show()
 
     m1 = np.array(converged_ep).mean(axis=0)
@@ -210,7 +209,7 @@ def main():
         x1, y1 = line.get_xydata()[1]
         text1 = 'M={:.2f}\n μ={:.2f}'.format(median1[i], m1[i])
         axes1.annotate(text1, xy=(x1, y1))
-    # plt.savefig('Time until Convergence.pdf', dpi=300, bbox_inches='tight')
+    plt.savefig('Time until Convergence.png', dpi=300, bbox_inches='tight')
     plt.show()
 
     m2 = np.array(converged_reward).mean(axis=0)
@@ -225,10 +224,11 @@ def main():
         # text2 = 'm={:.2f}\n μ={:.2f}\n σ={:.2f}'.format(median2[i], m2[i], st2[i])
         text2 = 'M={:.2f}\n μ={:.2f}'.format(median2[i], m2[i])
         axes2.annotate(text2, xy=(x2, y2))
-    # plt.savefig('Avg. Reward after Convergence.pdf', dpi=300, bbox_inches='tight')
+    plt.savefig('Avg. Reward after Convergence.png', dpi=300, bbox_inches='tight')
     plt.show()
 
     # !!!!
+    """
     m3 = np.array(converged_ep2).mean(axis=0)
     median3 = np.median(converged_ep2, axis=0)
     figure3, axes3 = plt.subplots()
@@ -254,6 +254,7 @@ def main():
         axes4.annotate(text4, xy=(x4, y4))
     # plt.savefig('Avg. Reward after Convergence.pdf', dpi=300, bbox_inches='tight')
     plt.show()
+    """
 
 
 if __name__ == "__main__":

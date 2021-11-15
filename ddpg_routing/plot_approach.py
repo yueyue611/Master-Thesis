@@ -39,7 +39,7 @@ def main():
 
     for i in range(1, experiment + 1):
         with open(
-                "/home/tud/Github/Master-Thesis/ddpg_routing/csv/100, QL=1/{}/CR_ No.{}, {}, {}, {}, {}, {}.csv".format(
+                "/home/tud/Github/Master-Thesis/ddpg_routing/csv/1000, QL=1/{}/CR_ No.{}, {}, {}, {}, {}, {}.csv".format(
                     noise_mode, i, total_episodes, total_steps, noise_mode, mode, mode_flow_change), 'r') as data_advance:
             reader_advance = list(csv.reader(data_advance))
             for j in range(len(reader_advance)):
@@ -60,7 +60,7 @@ def main():
                 reward_old[i - 1].append(conv(reader_old[j][0]))
 
         with open(
-                "/home/tud/Github/Master-Thesis/ddpg_routing/csv/spf/spf, 0, 5.csv", 'r') as data_spf:
+                "/home/tud/Github/Master-Thesis/ddpg_routing/csv/spf/spf, 1000, 5.csv", 'r') as data_spf:
             reader_spf = list(csv.reader(data_spf))
             for j in range(len(reader_spf)):
                 reward_spf[i - 1].append(conv(reader_spf[j][0]))
@@ -85,11 +85,11 @@ def main():
         x1, y1 = line.get_xydata()[1]
         text1 = 'M={:.2f}\n μ={:.2f}'.format(median1[i], m1[i])
         axes1.annotate(text1, xy=(x1, y1))
-    # plt.savefig('Time until Convergence.pdf', dpi=300, bbox_inches='tight')
+    plt.savefig('avg_reward_advance.png', dpi=300, bbox_inches='tight')
     plt.show()
 
     m2 = np.array(reward_new).mean(axis=0)
-    # st2 = np.array(converged_reward).std(axis=0)
+    # st2 = np.array(reward_new).std(axis=0)
     median2 = np.median(reward_new, axis=0)
     figure2, axes2 = plt.subplots()
     bp2 = axes2.boxplot(np.array(reward_new), labels=labels, sym="o", vert=True, patch_artist=True, showmeans=True)
@@ -100,7 +100,7 @@ def main():
         # text2 = 'm={:.2f}\n μ={:.2f}\n σ={:.2f}'.format(median2[i], m2[i], st2[i])
         text2 = 'M={:.2f}\n μ={:.2f}'.format(median2[i], m2[i])
         axes2.annotate(text2, xy=(x2, y2))
-    # plt.savefig('Avg. Reward after Convergence.pdf', dpi=300, bbox_inches='tight')
+    plt.savefig('avg_reward_new.png', dpi=300, bbox_inches='tight')
     plt.show()
 
     # !!!!
@@ -114,7 +114,7 @@ def main():
         x3, y3 = line.get_xydata()[1]
         text3 = 'M={:.2f}\n μ={:.2f}'.format(median3[i], m3[i])
         axes3.annotate(text3, xy=(x3, y3))
-    # plt.savefig('Time until Convergence.pdf', dpi=300, bbox_inches='tight')
+    plt.savefig('avg_reward_old.png', dpi=300, bbox_inches='tight')
     plt.show()
 
     m4 = np.array(reward_spf).mean(axis=0)
@@ -127,31 +127,31 @@ def main():
         x4, y4 = line.get_xydata()[1]
         text4 = 'M={:.2f}\n μ={:.2f}'.format(median4[i], m4[i])
         axes4.annotate(text4, xy=(x4, y4))
-    # plt.savefig('Avg. Reward after Convergence.pdf', dpi=300, bbox_inches='tight')
+    plt.savefig('avg_reward_spf.png', dpi=300, bbox_inches='tight')
     plt.show()
 
     plt.figure()
     plt.plot(median1, linewidth=1, linestyle='--', marker='o', markersize=4, label="Advance")
-    plt.plot(median2, linewidth=1, linestyle='--', marker='*', markersize=4, label="New")
-    plt.plot(median3, linewidth=1, linestyle='--', marker='^', markersize=4, label="Old")
-    plt.plot(median4, linewidth=1, linestyle='--', marker='+', markersize=4, label="Spf")
+    #plt.plot(median2, linewidth=1, linestyle='--', marker='*', markersize=4, label="New")
+    #plt.plot(median3, linewidth=1, linestyle='--', marker='^', markersize=4, label="First")
+    plt.plot(median4, linewidth=1, linestyle='--', marker='+', markersize=4, label="OSPF")
     plt.xticks(range(0, len(labels)), labels)
     plt.legend()
     plt.xlabel("traffic load(TL)")
-    plt.ylabel("avg. reward: median of 20 iterations")
-    # plt.savefig('Avg. Episodic avg_delay.pdf', dpi=300, bbox_inches='tight')
+    plt.ylabel("avg. reward (median of 20 iterations)")
+    plt.savefig('median1000.png', dpi=300, bbox_inches='tight')
     plt.show()
 
     plt.figure()
-    plt.plot(m1, linewidth=1, linestyle='--', marker='o', markersize=4, label="Advance")
-    plt.plot(m2, linewidth=1, linestyle='--', marker='*', markersize=4, label="New")
-    plt.plot(m3, linewidth=1, linestyle='--', marker='^', markersize=4, label="Old")
-    plt.plot(m4, linewidth=1, linestyle='--', marker='+', markersize=4, label="Spf")
+    plt.plot(m1, linewidth=1, linestyle='--', marker='o', markersize=4, label="Advanced")
+    #plt.plot(m2, linewidth=1, linestyle='--', marker='*', markersize=4, label="New")
+    #plt.plot(m3, linewidth=1, linestyle='--', marker='^', markersize=4, label="First")
+    plt.plot(m4, linewidth=1, linestyle='--', marker='+', markersize=4, label="OSPF")
     plt.xticks(range(0, len(labels)), labels)
     plt.legend()
     plt.xlabel("traffic load(TL)")
-    plt.ylabel("avg. reward: mean of 20 iterations")
-    # plt.savefig('Avg. Episodic avg_delay.pdf', dpi=300, bbox_inches='tight')
+    plt.ylabel("avg. reward")
+    plt.savefig('mean100.png', dpi=300, bbox_inches='tight')
     plt.show()
 
 

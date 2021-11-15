@@ -7,7 +7,7 @@ def main():
     processes = 3
     samples = 1000
 
-    mean = 0
+    mean = 0.5
 
     x_ou = np.zeros(shape=(samples, processes))
     x_gaussian = np.zeros(shape=(samples, processes))
